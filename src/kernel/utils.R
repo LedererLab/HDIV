@@ -5,6 +5,8 @@ covered <- function(bh, bt, SE, level = .05) {
   (bt <= bh + z.*SE) & (bt >= bh - z.*SE)
 }
 
+l2 <- function(x) sqrt(sum(x^2))
+
 # The following is taken from http://web.stanford.edu/~montanar/sslasso/home.html
 # Authors: Hamid Javadi, Adel Javanmard, Andrea Montanari, Sven Schmit
 # Date: April 24th, 2014
