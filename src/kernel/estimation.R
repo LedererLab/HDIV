@@ -91,11 +91,11 @@ library(glmnet)
 }
 
 # Empirical Gram matrix
-.Sigma_dhat <- function(Dhat) { (t(Dhat) %*% Dhat) / nrow(Dhat) }
+.Sigmahat <- function(x) { (t(x) %*% x) / nrow(x) }
 
 # Relaxed inverse
 # .mu_star.Thetahat <- function(Dhat) {
-#   Sigma_dhat <- .Sigma_dhat(Dhat)
+#   Sigma_dhat <- .Sigmahat(Dhat)
 #   Thetahat <- InverseLinfty(gramhat, nrow(Dhat))
 #   mu_star <- (Thetahat %*% Sigma_dhat - diag(1, ncol(Sigma_dhat))) %>% abs %>% max
 #   mu_star.Thetahat <- list(mu_star = mu_star, Thetahat = Thetahat)
@@ -103,7 +103,11 @@ library(glmnet)
 # }
 
 .Thetahat <- function(Dhat) {
-  Thetahat <- InverseLinfty(.Sigma_dhat(Dhat), nrow(Dhat))
+  if ( nrow(Dhat) > ncol(Dhat) ) {
+    Thetahat <- .Sigmahat(Dhat) %>% solve
+  } else {
+    Thetahat <- InverseLinfty(.Sigmahat(Dhat), nrow(Dhat))
+  }
   Thetahat
 }
 
@@ -126,10 +130,10 @@ library(glmnet)
   beta_debiased
 }
 
-# De-biased second-stage Lasso standard errors
-.SE <- function(Sigma_dhat, Thetahat, sigma0_hhat, n) {
-  (Thetahat %*% Sigma_dhat %*% t(Thetahat)) %>% 
-    diag %>% sqrt %>% { . * sigma0_hhat / sqrt(n) }
+.vhat <-function(Sigma_dhat, Thetahat) { 
+  (Thetahat %*% Sigma_dhat %*% t(Thetahat)) %>% diag %>% sqrt
 }
+# De-biased second-stage Lasso standard errors
+.SE <- function(vhat, sigma0_hhat, n) { vhat * sigma0_hhat / sqrt(n) }
 
 

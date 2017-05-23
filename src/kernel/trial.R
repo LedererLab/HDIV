@@ -29,52 +29,52 @@ trial <- function() {
   # second-stage estimation
   Dhat <- Z %*% Alpha0hat
   lambda.beta_Lasso <- .lambda.beta_Lasso(y, Dhat, sigma0_h)
-  lambda <- lambda.beta_Lasso$lambda; beta_Lasso <- lambda.beta_Lasso$beta_Lasso
+  lambda <- lambda.beta_Lasso$lambda; beta_Lasso_Dhat <- lambda.beta_Lasso$beta_Lasso
   
   # relaxed inverse estimation
-  Sigma_dhat <- .Sigma_dhat(Dhat)
+  Sigma_dhat <- .Sigmahat(Dhat)
   Thetahat <- .Thetahat(Dhat)
   
   # de-biased second-stage lasso estimation
-  beta_debiased <- .beta_debiased(y, X, Dhat, beta_Lasso, Thetahat)
+  beta_debiased <- .beta_debiased(y, X, Dhat, beta_Lasso_Dhat, Thetahat)
   sigma0_hhat <- .sigma0_hhat(y, X, beta_debiased)
-  SE <- .SE(Sigma_dhat, Thetahat, sigma0_hhat, n)
+  # SE <- .SE(Sigma_dhat, Thetahat, sigma0_hhat, n)
+  vhat <- .vhat(Sigma_dhat, Thetahat)
   
   # estimator data
   df_est <- data.frame(
-    config_id <- rep(config_id., 2*px),
+    config_id = rep(config_id., 2*px),
     trial_id = rep(trial_id, 2*px),
-    estimator = c(rep("Debiased", px), rep("Lasso", px)),
+    estimator = c(rep("Debiased", px), rep("Lasso_Dhat", px)),
     j = rep(1:px, 2),
-    estimate_j = c(beta_debiased, beta_Lasso),
+    estimate_j = c(beta_debiased, beta_Lasso_Dhat),
     beta0_j = rep(beta0, 2),
-    SE = c(SE, rep(NA, px)),
+    vhat = rep(vhat, 2),
     lambda_j = rep(lambda_j, 2)
   )
   
   # statistics
   mu_star <- (Thetahat %*% Sigma_dhat - diag(1, ncol(Sigma_dhat))) %>% abs %>% max
   mse_debiased <- (y - X %*% beta_debiased)^2 %>% mean
-  # mse_Lasso <- (y - X %*% beta_Lasso)^2 %>% mean
-  SE <- .SE(Sigma_dhat, Thetahat, sigma0_hhat, n)
-  trial_cvg <- df_est %>%
-    filter(estimator == "Debiased") %>%
-    summarize(avg_cvg = mean(covered(estimate_j, beta0_j, SE))) %>%
-    as.numeric
+  mse_Lasso_Dhat <- (y - X %*% beta_Lasso_Dhat)^2 %>% mean
+  # trial_cvg <- df_est %>%
+  #   filter(estimator == "Debiased") %>%
+  #   summarize(avg_cvg = mean(covered(estimate_j, beta0_j, SE))) %>%
+  #   as.numeric
   
   # estimation statistics data
   df_stats <- data.frame(
-    config_id = config_id.,
-    trial_id = trial_id,
-    estimator = "Debiased",
-    mse_debiased = mse_debiased,
-    mu_star = mu_star,
-    trial_cvg = trial_cvg,
-    sigma0_hhat = sigma0_hhat,
-    lambda = lambda
+    config_id = rep(config_id., 2),
+    trial_id = rep(trial_id, 2),
+    estimator = c("Debiased", "Lasso"),
+    mse_debiased = c(mse_debiased, mse_Lasso_Dhat),
+    mu_star = rep(mu_star, 2),
+    # trial_cvg = c(trial_cvg, NA),
+    sigma0_hhat = c(.sigma0_hhat(y, X, beta_debiased), .sigma0_hhat(y, X, beta_Lasso_Dhat)),
+    lambda = rep(lambda, 2)
   )
   
   res_dir <- paste("res", config_id., "", sep = "/")
-  write.csv(df_est, paste(res_dir, "est/", trial_id, ".csv", sep=""))
-  write.csv(df_stats, paste(res_dir, "stats/", trial_id, ".csv", sep=""))
+  write.csv(df_est, paste(res_dir, "est/est", trial_id, ".csv", sep=""))
+  write.csv(df_stats, paste(res_dir, "stats/stats", trial_id, ".csv", sep=""))
 }
