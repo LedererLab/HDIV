@@ -3,10 +3,10 @@
 
 #########################################################################
 # Dependencies
-library(purrr)
-library(tidyr)
-library(dplyr)
-source("kernel/utils.R")
+suppressMessages(library(purrr))
+suppressMessages(library(tidyr))
+suppressMessages(library(dplyr))
+suppressMessages(source("kernel/utils.R"))
 
 #########################################################################
 # Analysis
@@ -14,7 +14,7 @@ source("kernel/utils.R")
 analyze <- function() {
   args <- commandArgs(trailingOnly = TRUE)
   df_est <- args[1] %>% read.csv() %>%
-    select(config_id = 2, everything(), -2)
+    dplyr::select(config_id = 2, everything())
   
   cvg <- .cvg(df_est)
   print(cvg)
@@ -29,13 +29,13 @@ analyze <- function() {
     group_by(config_id, j) %>%
     summarize(coverage_j = mean(covered(estimate_j, beta0_j, SE))) %>%
     group_by(config_id) %>%
-    summraize(coverage = mean(coverage_j))
+    summarize(coverage = mean(coverage_j))
 }
 
 .l2bias <- function(df_est) {
-  df_stats %>%
-    group_by(config, j, estimator) %>%
-    summarize(avg_bias = mean(betahat_j - beta0_j)) %>%
+  df_est %>%
+    group_by(config_id, j, estimator) %>%
+    summarize(avg_bias = mean(estimate_j - beta0_j)) %>%
     group_by(estimator) %>%
     summarize(l2_avg_bias = l2(avg_bias))
 }
