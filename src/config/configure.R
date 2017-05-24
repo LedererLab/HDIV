@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(dplyr)
-source("configs.R")
 source("../kernel/DGM.R", chdir = TRUE)
 
 configure <- function() {
