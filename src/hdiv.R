@@ -2,7 +2,7 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 source("kernel/trial.R", chdir = TRUE)
 
-trial()
+trial(res_dir = "../res/")
 
 
 

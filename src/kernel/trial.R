@@ -10,7 +10,7 @@ source("utils.R", chdir = TRUE)
 #########################################################################
 # Simulation
 
-trial <- function() {
+trial <- function(res_dir) {
   # configs <- read.csv("config/configs.csv")
   args = commandArgs(trailingOnly=TRUE)
   config_id. <- args[1] %>% as.numeric
@@ -74,7 +74,6 @@ trial <- function() {
     lambda = rep(lambda, 2)
   )
   
-  res_dir <- paste("res", config_id., "", sep = "/")
-  write.csv(df_est, paste(res_dir, "est/est", trial_id, ".csv", sep=""))
-  write.csv(df_stats, paste(res_dir, "stats/stats", trial_id, ".csv", sep=""))
+  write.csv(df_est, paste(res_dir, config_id., "/est/est", trial_id, ".csv", sep=""))
+  write.csv(df_stats, paste(res_dir, config_id., "stats/stats", trial_id, ".csv", sep=""))
 }
