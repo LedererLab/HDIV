@@ -22,9 +22,9 @@ make_configs <- function() {
   )
   
   D <- data.frame(
-    sigma_h = c(1),
+    sigma0_h = c(1),
     sigma0_v = c(1),
-    sigma0_hv_mult = c(.5)
+    sigma0_hv_mult = c(.5, .3, .1)
   )
   
   E <- data.frame(

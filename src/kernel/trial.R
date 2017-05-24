@@ -67,7 +67,7 @@ trial <- function(res_dir) {
     config_id = rep(config_id., 2),
     trial_id = rep(trial_id, 2),
     estimator = c("Debiased", "Lasso"),
-    mse_debiased = c(mse_debiased, mse_Lasso_Dhat),
+    mse = c(mse_debiased, mse_Lasso_Dhat),
     mu_star = rep(mu_star, 2),
     # trial_cvg = c(trial_cvg, NA),
     sigma0_hhat = c(.sigma0_hhat(y, X, beta_debiased), .sigma0_hhat(y, X, beta_Lasso_Dhat)),
