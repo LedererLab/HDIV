@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(dplyr)
-source("../kernel/DGM.R", chdir = TRUE)
 
 configure <- function() {
   args = commandArgs(trailingOnly = TRUE)
@@ -10,6 +9,9 @@ configure <- function() {
   configs <- read.csv(paste(config_dir, "configs.csv", sep="/"))
   config <- configs %>%
     filter(config_id == .config_id)
+  
+  src_dir <- dirname(config_dir)
+  source(paste(src_dir, "kernel/DGM.R", sep="/"), chdir = TRUE)
   
   Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$sj.min, config$sj.max)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
