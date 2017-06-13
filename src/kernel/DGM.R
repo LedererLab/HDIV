@@ -71,8 +71,8 @@ library(mvtnorm)
 }
 
 # hvcorstr: "
-.Sigma_hv <- function(px, sigma0_v, sigma0_h, sigma0_hv_mult, corstr) {
-  sigma0_hv <- sigma0_v * sigma0_h * sigma0_hv_mult
+.Sigma_hv <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
+  sigma0_hv <- sigma0_v * sigma0_h * cor_hv
   if ( length(sigma0_v == 1) ) {
     Sigma0_v <- diag(sigma0_v^2, px)
   } else if ( length(sigma0_v == px) ) {
@@ -91,7 +91,7 @@ library(mvtnorm)
   Sigma_hv
 }
 
-# ... = sigma0_v, sigma0_h, sigma0_hv_mult, corstr
+# ... = sigma0_v, sigma0_h, cor_hv, corstr
 .hV <- function(n, px, ...) {
   Sigma_hv <- .Sigma_hv(px, ...)
   hV <- rmvnorm(n, rep(0, ncol(Sigma_hv)), Sigma_hv, method = "svd")
@@ -106,7 +106,7 @@ library(mvtnorm)
 
 .D <- function(Z, Alpha0) { Z %*% Alpha0 }
 
-# ... = sigma0_v, sigma0_h, sigma0_hv_mult, corstr
+# ... = sigma0_v, sigma0_h, cor_hv, corstr
 .X.y <- function(D, beta0, ...) {
   n <- nrow(D); px <- ncol(D)
   hV <- .hV(n, px, ...)
@@ -136,7 +136,7 @@ library(mvtnorm)
   D <- .D(Z, Alpha0)
   
   X.y <- .X.y(D, beta0, sigma0_v = config$sigma0_v, sigma0_h = config$sigma0_h, 
-              sigma0_hv_mult = config$sigma0_hv_mult, corstr = config$corstr)
+              cor_hv = config$cor_hv, corstr = config$corstr)
   X <- X.y$X; y <- X.y$y
   
   obs <- list(y = y, X = X, Z = Z, 

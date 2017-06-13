@@ -72,7 +72,7 @@ library(glmnet)
 .lambda.beta_Lasso <- function(y, Dhat, sigma0_h, tune_type = "CV") {
   px <- ncol(Dhat)
   if ( tune_type == "CV") {
-    res <- cv.glmnet(Dhat, y, intercept = FALSE, nfolds = 5) %>%
+    res <- cv.glmnet(Dhat, y, intercept = FALSE, standardize=F, nfolds = 5) %>%
     { list(lambda = .$lambda.min,
            beta_Lasso = as.numeric(coef(., s = "lambda.min"))[2:(px+1)]) }
   } else {
