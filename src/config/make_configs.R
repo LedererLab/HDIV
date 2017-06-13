@@ -3,11 +3,22 @@ library(purrr)
 library(dplyr)
 
 make_configs <- function() {
-  
+
   A1 <- data.frame(
     n = c(400, 400, 400, 600, 600, 600),
     px = c(300, 500, 600, 450, 750, 900),
-    pz = c(500, 600, 800, 750, 900, 1200)
+    pz = c(500, 600, 700, 750, 900, 1050)
+  )  
+  # A1 <- data.frame(
+  #   n = c(400, 400, 400, 600, 600, 600, 800, 800, 800),
+  #   px = c(300, 500, 600, 450, 750, 900, 600, 1000, 1200),
+  #   pz = c(500, 600, 700, 750, 900, 1050, 1000, 1200, 1400)
+  # )
+  
+  B0 <- data.frame(
+    s_beta = c(2, 2, 5, 5, 10, 10),
+    sj_min = c(2, 5, 5, 10, 10, 15),
+    sj_max = c(5, 10, 10, 15, 15, 20)
   )
   
   B1 <- data.frame(
@@ -24,7 +35,7 @@ make_configs <- function() {
   D <- data.frame(
     sigma0_h = c(1),
     sigma0_v = c(1),
-    sigma0_hv_mult = c(.5, .3, .1)
+    cor_hv = c(.5, .3, .1)
   )
   
   E <- data.frame(
@@ -35,8 +46,9 @@ make_configs <- function() {
     corstr = c("c1")
   )
   
-  configs1 <- list(A1, B1, C, D, E, F0)
-  configs <- list(configs1)
+  configs0 <- list(A1, B0, C, D, E, F0)
+  # configs1 <- list(A1, B1, C, D, E, F0)
+  configs <- list(configs0)
   configs %>%
     map(~ map(., ~ mutate(., id = 1)) %>%
           reduce(inner_join, by = "id") %>%
