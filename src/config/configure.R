@@ -11,7 +11,7 @@ configure <- function() {
   config <- configs %>%
     filter(config_id == .config_id)
   
-  Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$s_jmin, config$s_jmax)
+  Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$sj.min, config$sj.max)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
   
   write.matrix(Alpha0, paste(config_dir, .config_id, "Alpha0", sep = "/"))

@@ -17,14 +17,14 @@ make_configs <- function() {
   
   B0 <- data.frame(
     s_beta = c(2, 2, 5, 5, 10, 10),
-    sj_min = c(2, 5, 5, 10, 10, 15),
-    sj_max = c(5, 10, 10, 15, 15, 20)
+    sj.min = c(2, 5, 5, 10, 10, 15),
+    sj.max = c(5, 10, 10, 15, 15, 20)
   )
   
   B1 <- data.frame(
     s_beta = c(10, 30),
-    s_jmin = c(15, 40),
-    s_jmax = c(20, 50)
+    sj.min = c(15, 40),
+    sj.max = c(20, 50)
   )
   
   C <- data.frame(

@@ -13,8 +13,8 @@ library(mvtnorm)
 # Data-generating mechanism
 
 # First-stage regression coefficients
-.alpha0_j <- function(pz, a, s_jmin, s_jmax) {
-  s_j <- sample(s_jmin:s_jmax, size = 1)
+.alpha0_j <- function(pz, a, sj.min, sj.max) {
+  s_j <- sample(sj.min:sj.max, size = 1)
   S_j <- sample(1:pz, size = s_j, replace = FALSE)
   alpha0_j <- numeric(pz) %>%
   { .[S_j] <- a; . }
@@ -22,7 +22,7 @@ library(mvtnorm)
 }
 
 # ... - arguments to alpha0_j:
-#   pz, a, s_jmin, s_jmax
+#   pz, a, sj.min, sj.max
 .Alpha0 <- function(px, ...) {
   Alpha0 <- map(1:px, ~ { .alpha0_j(...) }) %>%
     reduce(cbind) %>%
