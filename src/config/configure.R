@@ -1,6 +1,9 @@
 #!/usr/bin/env Rscript
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-library(dplyr)
+#########################################################################
+# Dependencies
+suppressMessages(library(dplyr))
+#########################################################################
 
 configure <- function() {
   args = commandArgs(trailingOnly = TRUE)
@@ -16,6 +19,7 @@ configure <- function() {
   Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$sj.min, config$sj.max)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
   
+  sprintf("Generating parameters for configuration %d", .config_id)
   write.matrix(Alpha0, paste(config_dir, .config_id, "Alpha0", sep = "/"))
   write.matrix(beta0, paste(config_dir, .config_id, "beta0", sep = "/"))
 }
