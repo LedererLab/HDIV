@@ -18,6 +18,7 @@ configure <- function() {
   
   Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$sj.min, config$sj.max)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
+  Sigma.hv <- Sigma.hv.(config$px, config$sigma0_v, config$sigma0_h, config$cor_hv, config$corstr)
   
   sprintf("Generating parameters for configuration %d", .config_id)
   write.matrix(Alpha0, paste(config_dir, .config_id, "Alpha0", sep = "/"))

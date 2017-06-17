@@ -41,7 +41,7 @@ library(mvtnorm)
 
 # types: (1) "AC" (auto-correlative), (2) "CS" (circulant-symmetic), 
 # (3) "ID" (identity), (4) "RN" (scaled Gram of m draws from multivariate-p Normal)
-.Sigma_z <- function(pz, type = "AC", rho0 = .7, K = 5, m = 2*pz){
+.Sigma_z <- function(pz, type, rho0 = .7, K = 5, m = 2*pz){
   if ( type == "TZ" ) {
     # TZ
     Sigma_z <- rho0^abs(outer(1:(pz), 1:(pz), "-"))
@@ -73,7 +73,7 @@ library(mvtnorm)
 }
 
 # hvcorstr: "
-.Sigma_hv <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
+Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   sigma0_hv <- sigma0_v * sigma0_h * cor_hv
   if ( length(sigma0_v == 1) ) {
     Sigma0_v <- diag(sigma0_v^2, px)
@@ -103,7 +103,7 @@ library(mvtnorm)
 }
 
 .Sigma_z.Z <- function(n, pz, cov_type = "AC", ...) {
-  Sigma_z <- .Sigma_z(pz, cov_type, ...)
+  Sigma_z <- .Sigma_z(pz = pz, type = cov_type, ...)
   Z <- rmvnorm(n, rep(0, pz), Sigma_z)
   list(Sigma_z = Sigma_z, Z = Z)
 }
