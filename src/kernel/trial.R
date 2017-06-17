@@ -65,7 +65,7 @@ trial <- function(res_dir) {
     SE1.db = c(SE1.db, rep(NA, px)),
     SE1.la = c(SE1.la, rep(NA, px)),
     SE2.db = c(SE2.db, rep(NA, px)),
-    SE2.la = c(SE2.db, rep(NA, px)),
+    SE2.la = c(SE2.la, rep(NA, px)),
     # vhat = rep(vhat, 2),
     lambda_j = rep(lambda_j, 2)
   )
