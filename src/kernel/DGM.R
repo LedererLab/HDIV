@@ -39,7 +39,7 @@ library(mvtnorm)
 }
 
 
-# types: (1) "AC" (auto-correlative), (2) "CS" (circulant-symmetic), 
+# types: (1) "TZ" (Toeplitz), (2) "CS" (circulant-symmetic), 
 # (3) "ID" (identity), (4) "RN" (scaled Gram of m draws from multivariate-p Normal)
 .Sigma_z <- function(pz, type, rho0 = .7, K = 5, m = 2*pz){
   if ( type == "TZ" ) {
@@ -96,10 +96,10 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
 }
 
 # ... = sigma0_v, sigma0_h, cor_hv, corstr
-.hV <- function(n, px, ...) {
-  Sigma_hv <- .Sigma_hv(px, ...)
-  hV <- rmvnorm(n, rep(0, ncol(Sigma_hv)), Sigma_hv, method = "svd")
-  list(h = hV[,1], V = hV[,2:ncol(hV)], Sigma_hv = Sigma_hv)
+.hV <- function(n, Sigma.hv) {
+  # Sigma_hv <- .Sigma_hv(px, ...)
+  hV <- rmvnorm(n, rep(0, ncol(Sigma_hv)), Sigma.hv, method = "svd")
+  list(h = hV[,1], V = hV[,2:ncol(hV)])
 }
 
 .Sigma_z.Z <- function(n, pz, cov_type = "AC", ...) {
@@ -111,13 +111,13 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
 .D <- function(Z, Alpha0) { Z %*% Alpha0 }
 
 # ... = sigma0_v, sigma0_h, cor_hv, corstr
-.X.y <- function(D, beta0, ...) {
+.X.y <- function(D, beta0, Sigma.hv) {
   n <- nrow(D); px <- ncol(D)
-  hV <- .hV(n, px, ...)
-  h <- hV$h; V <- hV$V; Sigma_hv = hV$Sigma_hv
+  hV <- .hV(n, px, Sigma.hv)
+  h <- hV$h; V <- hV$V;
   X <- D + V
   y <- X %*% beta0 + h
-  list(X = X, y = y, V = V, h = h, Sigma_hv = Sigma_hv)
+  list(X = X, y = y, V = V, h = h)
 }
 
 #########################################################################
@@ -134,13 +134,15 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   beta0 <- read.table(paste("config", config_id., "beta0", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
+  Sigma.hv <- read.table(paste("config", config_id., "Sigma.hv", sep = "/")) %>%
+    as.matrix %>%
+    { dimnames(.) <- NULL; . }
   
   Sigma_z.Z <- .Sigma_z.Z(n = config$n, pz = config$pz, type = config$type)
   Z <- Sigma_z.Z$Z
   D <- .D(Z, Alpha0)
   
-  X.y <- .X.y(D, beta0, sigma0_v = config$sigma0_v, sigma0_h = config$sigma0_h, 
-              cor_hv = config$cor_hv, corstr = config$corstr)
+  X.y <- .X.y(D, beta0, Sigma.hv = Sigma.hv)
   X <- X.y$X; y <- X.y$y
   
   obs <- list(y = y, X = X, Z = Z, 

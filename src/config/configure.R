@@ -23,6 +23,7 @@ configure <- function() {
   sprintf("Generating parameters for configuration %d", .config_id)
   write.matrix(Alpha0, paste(config_dir, .config_id, "Alpha0", sep = "/"))
   write.matrix(beta0, paste(config_dir, .config_id, "beta0", sep = "/"))
+  write.matrix(Sigma.hv, paste(config_dir, .config_id, "Sigma.hv", sep = "/"))
 }
 
 configure()
