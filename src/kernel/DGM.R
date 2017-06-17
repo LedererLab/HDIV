@@ -41,9 +41,9 @@ library(mvtnorm)
 
 # types: (1) "AC" (auto-correlative), (2) "CS" (circulant-symmetic), 
 # (3) "ID" (identity), (4) "RN" (scaled Gram of m draws from multivariate-p Normal)
-.Sigma_z <- function(pz, type = "AC", rho0 = .5, K = 5, m = 2*pz){
-  if ( type == "AC" ) {
-    # AC
+.Sigma_z <- function(pz, type = "AC", rho0 = .7, K = 5, m = 2*pz){
+  if ( type == "TZ" ) {
+    # TZ
     Sigma_z <- rho0^abs(outer(1:(pz), 1:(pz), "-"))
   } else if ( type == "CS" ) {
     # CS
@@ -66,6 +66,8 @@ library(mvtnorm)
         Sigma_z[j, k] <- Sigma_z[k, j]
       }
     }
+  } else if ( type == "EC" ) {
+    # ...
   }
   Sigma_z
 }
@@ -81,6 +83,8 @@ library(mvtnorm)
         
   if ( corstr == "c1" ) {
     corstr. <- rep(1, px)
+  } else if (corstr == "c2") {
+    corstr. <- runif(px, min = .75, max = 1.25)
   } else {
     # ...
   }
