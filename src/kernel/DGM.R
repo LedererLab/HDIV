@@ -84,7 +84,7 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   if ( corstr == "c1" ) {
     corstr. <- rep(1, px)
   } else if (corstr == "c2") {
-    corstr. <- runif(px, min = .75, max = 1.25)
+    corstr. <- runif(px, min = .9, max = 1.1)
   } else {
     # ...
   }
@@ -98,12 +98,12 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
 # ... = sigma0_v, sigma0_h, cor_hv, corstr
 .hV <- function(n, Sigma.hv) {
   # Sigma_hv <- .Sigma_hv(px, ...)
-  hV <- rmvnorm(n, rep(0, ncol(Sigma_hv)), Sigma.hv, method = "svd")
+  hV <- rmvnorm(n, rep(0, ncol(Sigma.hv)), Sigma.hv, method = "svd")
   list(h = hV[,1], V = hV[,2:ncol(hV)])
 }
 
-.Sigma_z.Z <- function(n, pz, cov_type = "AC", ...) {
-  Sigma_z <- .Sigma_z(pz = pz, type = cov_type, ...)
+.Sigma_z.Z <- function(n, pz, type, ...) {
+  Sigma_z <- .Sigma_z(pz = pz, type = type, ...)
   Z <- rmvnorm(n, rep(0, pz), Sigma_z)
   list(Sigma_z = Sigma_z, Z = Z)
 }
@@ -113,7 +113,7 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
 # ... = sigma0_v, sigma0_h, cor_hv, corstr
 .X.y <- function(D, beta0, Sigma.hv) {
   n <- nrow(D); px <- ncol(D)
-  hV <- .hV(n, px, Sigma.hv)
+  hV <- .hV(n, Sigma.hv)
   h <- hV$h; V <- hV$V;
   X <- D + V
   y <- X %*% beta0 + h

@@ -15,6 +15,8 @@ trial <- function(res_dir) {
   args = commandArgs(trailingOnly=TRUE)
   config_id. <- args[1] %>% as.numeric
   trial_id <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
+  # config_id. <- 3
+  # trial_id <- 1
   
   obs <- .obs(config_id.)
   y <- obs$y; X <- obs$X; Z <- obs$Z;
@@ -41,8 +43,9 @@ trial <- function(res_dir) {
   
   u.hat <- y - X %*% beta_debiased
   # SE <- .SE(Dhat, Thetahat, u.hat)
-  h.hat <- h.hat.(Dhat, Thetahat, u.hat)
-  SE <- h.hat / sqrt(n)
+  # h.hat <- h.hat.(Dhat, Thetahat, u.hat)
+  SE.db <- h.hat.(Dhat, Thetahat, u.hat) / sqrt(n)
+  SE.la <- h.hat.(Dhat, Thetahat, y - X %*% beta_Lasso_Dhat) / sqrt(n)
   # vhat <- .vhat(Sigma_dhat, Thetahat)
   
   # estimator data
@@ -53,7 +56,9 @@ trial <- function(res_dir) {
     j = rep(1:px, 2),
     estimate_j = c(beta_debiased, beta_Lasso_Dhat),
     beta0_j = rep(beta0, 2),
-    SE = c(SE, rep(NA, px)),
+    # SE = c(SE, rep(NA, px)),
+    SE.db = c(SE.db, rep(NA, px)),
+    SE.la = c(SE.la, rep(NA, px)),
     # vhat = rep(vhat, 2),
     lambda_j = rep(lambda_j, 2)
   )
@@ -81,4 +86,5 @@ trial <- function(res_dir) {
   
   write.csv(df_est, paste(res_dir, config_id., "/est/est", trial_id, ".csv", sep=""))
   write.csv(df_stats, paste(res_dir, config_id., "/stats/stats", trial_id, ".csv", sep=""))
+  # print(df_est)
 }
