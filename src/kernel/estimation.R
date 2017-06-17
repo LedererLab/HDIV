@@ -130,11 +130,11 @@ library(glmnet)
   beta_debiased
 }
 
-# .vhat <-function(Sigma_dhat, Thetahat) { 
-#   (Thetahat %*% Sigma_dhat %*% t(Thetahat)) %>% diag %>% sqrt
-# }
+h.hat2. <-function(Sigma_dhat, Thetahat) {
+  (Thetahat %*% Sigma_dhat %*% t(Thetahat)) %>% diag %>% sqrt
+}
 
-h.hat. <- function(D.hat, Theta.hat, u.hat) {
+h.hat1. <- function(D.hat, Theta.hat, u.hat) {
   # n <- length(u.hat); p <- ncol(D.hat)
   (Theta.hat %*% t(D.hat)) %>% 
     apply(1, function(X) { mean(X^2 * u.hat^2) }) %>%

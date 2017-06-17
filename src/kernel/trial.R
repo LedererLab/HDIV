@@ -41,11 +41,16 @@ trial <- function(res_dir) {
   beta_debiased <- .beta_debiased(y, X, Dhat, beta_Lasso_Dhat, Thetahat)
   sigma0_hhat <- .sigma0_hhat(y, X, beta_debiased)
   
-  u.hat <- y - X %*% beta_debiased
+  u.hat.db <- y - X %*% beta_debiased
+  u.hat.la <- y - X %*% beta_Lasso_Dhat
+  sd.u.hat.db <- u.hat.db^2 %>% mean %>% sqrt
+  sd.u.hat.la <- u.hat.la^2 %>% mean %>% sqrt
   # SE <- .SE(Dhat, Thetahat, u.hat)
   # h.hat <- h.hat.(Dhat, Thetahat, u.hat)
-  SE.db <- h.hat.(Dhat, Thetahat, u.hat) / sqrt(n)
-  SE.la <- h.hat.(Dhat, Thetahat, y - X %*% beta_Lasso_Dhat) / sqrt(n)
+  SE1.db <- h.hat1.(Dhat, Thetahat, u.hat.db) / sqrt(n)
+  SE1.la <- h.hat1.(Dhat, Thetahat, u.hat.la) / sqrt(n)
+  SE2.db <- h.hat2.(Sigma_dhat, Thetahat) * sd.u.hat.db / sqrt(n)
+  SE2.la <- h.hat2.(Sigma_dhat, Thetahat) * sd.u.hat.la / sqrt(n)
   # vhat <- .vhat(Sigma_dhat, Thetahat)
   
   # estimator data
@@ -57,8 +62,10 @@ trial <- function(res_dir) {
     estimate_j = c(beta_debiased, beta_Lasso_Dhat),
     beta0_j = rep(beta0, 2),
     # SE = c(SE, rep(NA, px)),
-    SE.db = c(SE.db, rep(NA, px)),
-    SE.la = c(SE.la, rep(NA, px)),
+    SE1.db = c(SE1.db, rep(NA, px)),
+    SE1.la = c(SE1.la, rep(NA, px)),
+    SE2.db = c(SE2.db, rep(NA, px)),
+    SE2.la = c(SE2.db, rep(NA, px)),
     # vhat = rep(vhat, 2),
     lambda_j = rep(lambda_j, 2)
   )
