@@ -130,10 +130,18 @@ library(glmnet)
   beta_debiased
 }
 
-.vhat <-function(Sigma_dhat, Thetahat) { 
-  (Thetahat %*% Sigma_dhat %*% t(Thetahat)) %>% diag %>% sqrt
+# .vhat <-function(Sigma_dhat, Thetahat) { 
+#   (Thetahat %*% Sigma_dhat %*% t(Thetahat)) %>% diag %>% sqrt
+# }
+
+h.hat. <- function(D.hat, Theta.hat, u.hat) {
+  n <- length(u.hat); p <- ncol(Sigma_dhat)
+  (Theta.hat %*% t(D.hat)) %>% 
+    apply(1, function(X) { mean(X^2 * u.hat^2) }) %>%
+    sqrt
 }
+
 # De-biased second-stage Lasso standard errors
-.SE <- function(vhat, sigma0_hhat, n) { vhat * sigma0_hhat / sqrt(n) }
+.SE <- function(vhat, sigma0_hhat, u.hat) { vhat * sigma0_hhat / sqrt(n) }
 
 

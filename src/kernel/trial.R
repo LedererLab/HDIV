@@ -38,8 +38,12 @@ trial <- function(res_dir) {
   # de-biased second-stage lasso estimation
   beta_debiased <- .beta_debiased(y, X, Dhat, beta_Lasso_Dhat, Thetahat)
   sigma0_hhat <- .sigma0_hhat(y, X, beta_debiased)
-  # SE <- .SE(Sigma_dhat, Thetahat, sigma0_hhat, n)
-  vhat <- .vhat(Sigma_dhat, Thetahat)
+  
+  u.hat <- y - X %*% beta_debiased
+  # SE <- .SE(Dhat, Thetahat, u.hat)
+  h.hat <- h.hat.(Dhat, Thetahat, u.hat)
+  SE <- h.hat / sqrt(n)
+  # vhat <- .vhat(Sigma_dhat, Thetahat)
   
   # estimator data
   df_est <- data.frame(
@@ -49,7 +53,8 @@ trial <- function(res_dir) {
     j = rep(1:px, 2),
     estimate_j = c(beta_debiased, beta_Lasso_Dhat),
     beta0_j = rep(beta0, 2),
-    vhat = rep(vhat, 2),
+    SE = c(SE, rep(NA, px)),
+    # vhat = rep(vhat, 2),
     lambda_j = rep(lambda_j, 2)
   )
   
