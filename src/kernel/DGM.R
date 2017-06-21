@@ -13,12 +13,11 @@ library(mvtnorm)
 # Data-generating mechanism
 
 # First-stage regression coefficients
-.alpha0_j <- function(pz, a, sj.min, sj.max) {
-  s_j <- sample(sj.min:sj.max, size = 1)
-  S_j <- sample(1:pz, size = s_j, replace = FALSE)
-  alpha0_j <- numeric(pz) %>%
-  { .[S_j] <- a; . }
-  alpha0_j
+.alpha0_j <- function(pz, a, s.j) {
+  S.j <- sample(1:pz, size = s.j, replace = FALSE)
+  alpha0.j <- numeric(pz) %>%
+  { .[S.j] <- a; . }
+  alpha0.j
 }
 
 # ... - arguments to alpha0_j:

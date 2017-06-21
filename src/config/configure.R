@@ -16,7 +16,7 @@ configure <- function() {
   src_dir <- dirname(config_dir)
   source(paste(src_dir, "kernel/DGM.R", sep="/"), chdir = TRUE)
   
-  Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$sj.min, config$sj.max)
+  Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$s.j)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
   Sigma.hv <- Sigma.hv.(config$px, config$sigma0_v, config$sigma0_h, config$cor_hv, config$corstr)
   
