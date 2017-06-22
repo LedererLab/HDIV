@@ -28,24 +28,20 @@ make_configs <- function() {
     # sj.max = c(10, 15, 20, 50)
   )
   
-  B1 <- data.frame(
-    s_beta = c(10, 30),
-    sj.min = c(15, 40),
-    sj.max = c(20, 50)
+  C1 <- data.frame(
+    b = c(1, .1)
   )
-  
-  C <- data.frame(
-    b = c(1, .1),
+  C2 <- data.frame(
     a = c(1, .1)
   )
   
   D1 <- data.frame(
-    sigma0_h = c(1, .1)
+    sigma0_h = c(1)
     # cor_hv = c(.9, .7, .5, .3, .1)
   )
   
   D2 <- data.frame(
-    sigma0_v = c(1, .1)
+    sigma0_v = c(1)
   )
   
   D3 <- data.frame(
@@ -61,7 +57,7 @@ make_configs <- function() {
     corstr= c("c1")
   )
   
-  configs0 <- list(A1, B0, C, D1, D2, D3, E, F0)
+  configs0 <- list(A1, B0, C1, C2, D1, D2, D3, E, F0)
   # configs1 <- list(A1, B1, C, D, E, F0)
   configs <- list(configs0)
   configs %>%
