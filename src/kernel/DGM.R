@@ -3,11 +3,11 @@
 #########################################################################
 # Dependencies
 
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(MASS)
-library(mvtnorm)
+# library(dplyr)
+# library(tidyr)
+# library(purrr)
+# library(MASS)
+# library(mvtnorm)
 
 #########################################################################
 # Data-generating mechanism
@@ -38,7 +38,7 @@ library(mvtnorm)
 }
 
 
-# types: (1) "TZ" (Toeplitz), (2) "CS" (circulant-symmetic), 
+# types: (1) "TZ" (Toeplitz), (2) "CS" (circulant-symmetic),
 # (3) "ID" (identity), (4) "RN" (scaled Gram of m draws from multivariate-p Normal)
 .Sigma_z <- function(pz, type, rho0 = .7, K = 5, m = 2*pz){
   if ( type == "TZ" ) {
@@ -77,9 +77,9 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   if ( length(sigma0_v == 1) ) {
     Sigma0_v <- diag(sigma0_v^2, px)
   } else if ( length(sigma0_v == px) ) {
-    Sigma0_v <- diag(sigma0_v^2) 
+    Sigma0_v <- diag(sigma0_v^2)
   } else { simpleError("Unsuitable length for sigma0_v") }
-        
+
   if ( corstr == "c1" ) {
     corstr. <- rep(1, px)
   } else if (corstr == "c2") {
@@ -87,7 +87,7 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   } else {
     # ...
   }
-  
+
   top <- c(sigma0_h^2, sigma0_hv * corstr.)
   bottom <- cbind(sigma0_hv * corstr., Sigma0_v)
   Sigma_hv <- rbind(top, bottom)
@@ -126,7 +126,7 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   configs <- read.csv("config/configs.csv")
   config <- configs %>%
     filter(config_id == config_id.)
-  
+
   Alpha0 <- read.table(paste("config", config_id., "Alpha0", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
@@ -136,15 +136,15 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   Sigma.hv <- read.table(paste("config", config_id., "Sigma.hv", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
-  
+
   Sigma_z.Z <- .Sigma_z.Z(n = config$n, pz = config$pz, type = config$type)
   Z <- Sigma_z.Z$Z
   D <- .D(Z, Alpha0)
-  
+
   X.y <- .X.y(D, beta0, Sigma.hv = Sigma.hv)
   X <- X.y$X; y <- X.y$y
-  
-  obs <- list(y = y, X = X, Z = Z, 
+
+  obs <- list(y = y, X = X, Z = Z,
               sigma0_h = config$sigma0_h, sigma0_v = config$sigma0_v,
               beta0 = beta0)
   obs

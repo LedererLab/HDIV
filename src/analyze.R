@@ -16,11 +16,11 @@ suppressMessages(library(xtable))
 ingest <- function() {
   # args <- commandArgs(trailingOnly = TRUE)
   # res_dir <- args[1]
-  # res_dir <- "/Users/David/johannes/hdiv/res"
-  res_dir <- "/homes/dag89/hdiv/res"
+  res_dir <- "/Users/David/johannes/hdiv/res"
+  # res_dir <- "/homes/dag89/hdiv/res"
   # src_dir <- args[2]
-  # proj_dir <- "/Users/David/johannes/hdiv"
-  proj_dir <- "/homes/dag89/hdiv/" 
+  proj_dir <- "/Users/David/johannes/hdiv"
+  # proj_dir <- "/homes/dag89/hdiv/" 
   suppressMessages(source(paste(proj_dir, "src/kernel/utils.R", sep = "/")))
   
   df_est <- paste(res_dir, "est.csv", sep = "/") %>% read.csv
@@ -34,54 +34,76 @@ ingest <- function() {
   list(est = df_est, stats = df_stats, configs = configs)
 }
 
-summ <- function(res) {
-  res$est %>%
-    filter(estimator == "Debiased") %>%
+cvg <-function(est, stats, configs) {
+  est %>%
     inner_join(dplyr::select(res$configs, config_id, n, sigma0_h), 
                by = "config_id") %>%
     inner_join(filter(res$stats, estimator == "Debiased") %>%
                  dplyr::select(config_id, trial_id, sigma0_hhat),
                by = c("config_id", "trial_id")) %>%
+    mutate(cvgj = covered(estimate_j, beta0_j, SE1.la)) %>%
+    group_by(config_id, j) %>%
+    summarize(sdj = sd(estimate_j),
+              cvgj = mean(cvgj),
+              SEj = mean(SE1.la)) %>%
     group_by(config_id) %>%
-    mutate(cvgj1.la = covered(estimate_j, beta0_j, SE1.la)) %>%
-           # cvgj1.db = covered(estimate_j, beta0_j, SE1.db),
-           # cvgj2.la = covered(estimate_j, beta0_j, SE2.la),
-           # cvgj2.db = covered(estimate_j, beta0_j, SE2.db)) %>%
-    # summarize(coverage_j = mean(covered(estimate_j, beta0_j, SE))) %>%
-    # group_by(config_id) %>%
-    summarize(cvg1.la = mean(cvgj1.la),
-              # cvg1.db = mean(cvgj1.db),
-              # cvg2.la = mean(cvgj2.la),
-              # cvg2.db = mean(cvgj2.db),
-              SE1.la = mean(SE1.la)) %>%
-              # SE1.db = mean(SE1.db),
-              # SE2.la = mean(SE2.la),
-              # SE2.db = mean(SE2.db)) %>% 
+    summarize(cvg = mean(cvgj),
+              SE = mean(SEj),
+              sd = mean(sdj)) %>%
     inner_join(res$configs, by = "config_id") %>%
     inner_join(group_by(res$stats, config_id) %>%
                  summarize(sigma0_hhat = mean(sigma0_hhat), by = "config_id"))
 }
-
-# res <- ingest()
-# tbl <- analyze(res)
-# tbl %>% 
-ingest() %>%
-  summ %>%
-  dplyr::select(config_id, n, px, pz, s_beta, s.j, b, a, cor_hv, type, cvg1.la, SE1.la) %>%
-  print
-
-# tblS0 <- filter(res$est,
-#                 estimator == "Debiased",
-#                 beta0_j != 0) %>%
-#   cvg(res$stats, res$configs)
-# tblS0C <- filter(res$est,
-#                 estimator == "Debiased",
-#                 beta0_j == 0) %>%
-#   cvg(res$stats, res$configs)
 # 
-# tbl %>%
-#   transmute(SE2.la <= SE1.la) %>%
-#   View
+
+res <- ingest()
+
+# ingest() %>%
+#   summ %>%
+#   dplyr::select(config_id, n, px, pz, s_beta, s.j, b, a, cor_hv, type, cvg1.la, SE1.la) %>%
+#   print
+
+tbl <- filter(res$est,
+               estimator == "Debiased") %>%
+  cvg(res$stats, res$configs)
+tblS0 <- filter(res$est,
+                estimator == "Debiased",
+                beta0_j != 0) %>%
+  cvg(res$stats, res$configs)
+tblS0C <- filter(res$est,
+                estimator == "Debiased",
+                beta0_j == 0) %>%
+  cvg(res$stats, res$configs)
+
+f.f1 <- function(x,y) {sprintf("%.3f (%.2f)", x,y)}
+f.f2 <- function(x,y) {sprintf("%.2f (%.2f)", x,y)}
+f.d <- function(x,y) {sprintf("(%d, %d)", x,y)}
+
+tbl1 <- list(tbl, tblS0, tblS0C) %>%
+  map(~ { mutate(., len = 2*SE * qnorm(1-.05/2)) %>%
+            mutate(cvg.len = f.f1(cvg, len)) %>%
+                   # SE.sd = f.f2(SE, sd)) %>%
+            dplyr::select(config_id, cvg.len) }) %>%
+  reduce(function(x,y){inner_join(x,y,by="config_id")}) %>%
+  inner_join(res$configs, by="config_id") %>%
+  filter(a == 1, b == 1) %>%
+  mutate(ss = f.d(s_beta, s.j)) %>%
+  dplyr::select(ss, cor_hv, type, cvg.len.x:cvg.len)
+  # dplyr::select(n, px, pz, s_beta, s.j, b, a, cor_hv, type, cvg1.la.x:len1.la)
+
+tbl1.CS <- filter(tbl1, type == "CS") %>%
+  dplyr::select(-type)
+tbl1.TZ <- filter(tbl1, type == "TZ") %>%
+  dplyr::select(-type)
+
+tbl1.CS %>%
+  xtable %>%
+  xtable(digits=c(0,0,1,rep(0,3))) %>%
+  print(include.rownames=F, booktabs=T)
+tbl1.TZ %>%
+  xtable %>%
+  xtable(digits=c(0,0,1,rep(0,3))) %>%
+  print(include.rownames=F, booktabs=T)
 # 
 # d <- tbl %>%
 #   filter(corstr == "c2") %>%
@@ -94,7 +116,6 @@ ingest() %>%
 #   dplyr::select(-(b:by), cor_hv)
 # 
 # tbl %>%
-#   filter(corstr == "c2") %>%
 #   dplyr::select(-config_id, -corstr, -rmse, -X, -id, -(cvg1.db:cvg2.db), -(SE1.db:SE2.db), -sigma0_hhat) %>%
 #   mutate(SE1.la = 2*SE1.la * qnorm(1-.05/2)) %>%
 #   unite(cvg.len, cvg1.la, SE1.la, sep="_") %>%
@@ -121,38 +142,7 @@ ingest() %>%
 #   dplyr::select(-rmse, -X, -id, -(cvg1.db:cvg2.db), -(SE1.db:SE2.db)) %>%
 #   View
 # 
-# cvg <-function(est, stats, configs) {
-#   est %>%
-#     inner_join(dplyr::select(configs, config_id, n, sigma0_h), 
-#                by = "config_id") %>%
-#     inner_join(filter(stats, estimator == "Debiased") %>%
-#                  dplyr::select(config_id, trial_id, sigma0_hhat),
-#                by = c("config_id", "trial_id")) %>%
-#     group_by(config_id) %>%
-#     mutate(cvgj1.la = covered(estimate_j, beta0_j, SE1.la),
-#            cvgj1.db = covered(estimate_j, beta0_j, SE1.db),
-#            cvgj2.la = covered(estimate_j, beta0_j, SE2.la),
-#            cvgj2.db = covered(estimate_j, beta0_j, SE2.db)) %>%
-#     # summarize(coverage_j = mean(covered(estimate_j, beta0_j, SE))) %>%
-#     # group_by(config_id) %>%
-#     summarize(cvg1.la = mean(cvgj1.la),
-#               cvg1.db = mean(cvgj1.db),
-#               cvg2.la = mean(cvgj2.la),
-#               cvg2.db = mean(cvgj2.db),
-#               # summarize(cvg.th = mean(cvgj.th),
-#               #           cvg.dt = mean(cvgj.dt),
-#               rmse = mean((estimate_j-beta0_j)^2) %>% sqrt,
-#               # med.bias = quantile(estimate_j - beta0_j, 0.5)
-#               # bias = mean(estimate_j-beta0_j),
-#               SE1.la = mean(SE1.la),
-#               SE1.db = mean(SE1.db),
-#               SE2.la = mean(SE2.la),
-#               SE2.db = mean(SE2.db)) %>% 
-#     inner_join(configs, by = "config_id") %>%
-#     inner_join(group_by(stats, config_id) %>%
-#                  summarize(sigma0_hhat = mean(sigma0_hhat), by = "config_id"))
-# }
-# 
+
 # 
 # 
 # tbl %>% 
