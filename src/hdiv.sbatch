@@ -10,5 +10,6 @@
 #SBATCH --mail-user=dag89@uw.edu # Email to which notifications will be sent
 #SBATCH --array=1-100
 
+module load R
 config=$1
 Rscript hdiv.R $config
