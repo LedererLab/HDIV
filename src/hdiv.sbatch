@@ -12,4 +12,4 @@
 
 module load R
 config=$1
-Rscript hdiv.R $config
+cd src; Rscript hdiv.R $config
