@@ -9,7 +9,7 @@
 
 trial <- function(res_dir, tau=1.1) {
   args = commandArgs(trailingOnly=TRUE)
-  config_id. <- args[1] %>% as.numeric
+  config_id <- args[1] %>% as.numeric
   trial_id <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
   obs <- .obs(config_id)
   y <- obs$y; X <- obs$X; Z <- obs$Z;

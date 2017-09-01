@@ -8,7 +8,7 @@
 #SBATCH -e err/hdiv_%j.err    # File to which STDERR will be written
 #SBATCH --mail-type=ALL       # Type of email notification- BEGIN,END,FAIL,ALL
 #SBATCH --mail-user=dag89@uw.edu # Email to which notifications will be sent
-#SBATCH --array=1-100
+#SBATCH --array=1-1
 
 module load R
 config=$1
