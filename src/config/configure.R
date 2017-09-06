@@ -3,6 +3,7 @@
 #########################################################################
 # Dependencies
 suppressMessages(library(dplyr))
+suppressMessages(library(purrr))
 #########################################################################
 
 configure <- function() {
@@ -12,14 +13,14 @@ configure <- function() {
   configs <- read.csv(paste(config_dir, "configs.csv", sep="/"))
   config <- configs %>%
     filter(config_id == .config_id)
-  
+
   src_dir <- dirname(config_dir)
   source(paste(src_dir, "kernel/DGM.R", sep="/"), chdir = TRUE)
-  
+
   Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$s.j)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
   Sigma.hv <- Sigma.hv.(config$px, config$sigma0_v, config$sigma0_h, config$cor_hv, config$corstr)
-  
+
   sprintf("Generating parameters for configuration %d", .config_id)
   write.matrix(Alpha0, paste(config_dir, .config_id, "Alpha0", sep = "/"))
   write.matrix(beta0, paste(config_dir, .config_id, "beta0", sep = "/"))
