@@ -4,6 +4,8 @@
 # Dependencies
 suppressMessages(library(dplyr))
 suppressMessages(library(purrr))
+suppressMessages(library(MASS))
+
 #########################################################################
 
 configure <- function() {

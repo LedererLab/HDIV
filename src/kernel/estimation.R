@@ -57,10 +57,15 @@
 }
 
 # Second-stage
-.lambda.beta_Lasso <- function(y, Dhat, sigma0_h, tune_type = "CV") {
+.lambda.beta_Lasso <- function(y, Dhat, sigma0_h, tune_type = "CV", no_pen_ids = c()) {
   px <- ncol(Dhat)
+  if ( length(no_pen_ids)==0 ) {
+    penalties <- rep(1, px)
+  } else {
+    penalties <- rep(1, px); penalties[no_pen_ids] <- 0
+  }
   if ( tune_type == "CV") {
-    res <- cv.glmnet(Dhat, y, intercept = FALSE, standardize=F, nfolds = 5) %>%
+    res <- cv.glmnet(Dhat, y, intercept = FALSE, standardize=F, nfolds = 5, penalty.factor=penalties) %>%
     { list(lambda = .$lambda.min,
            beta_Lasso = as.numeric(coef(., s = "lambda.min"))[2:(px+1)]) }
   } else {
@@ -70,7 +75,7 @@
       # ...
     }
     lambda <- .lambda(Dhat, sigma0_u.hat)
-    res <- glmnet(Dhat, y, intercept = FALSE) %>%
+    res <- glmnet(Dhat, y, intercept = FALSE, penalty.factor=penalties) %>%
     { list(lambda = lambda,
            beta_Lasso = as.numeric(predict(., type = "coefficients", s = lambda,
                                            exact = TRUE, x = Dhat, y = y))[2:(px+1)]) }
