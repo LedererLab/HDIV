@@ -183,6 +183,7 @@ find_mu <- function(Sigma.hat) {
   Theta.hat <- lapply(
     1:px,
     function(j) {
+      mu <- mus[j]
       b1 <- rep(mu, px); b1[j] = mu-1
       b2 <- rep(mu, px); b2[j] = mu+1
       b <- c(rep(0, 2*px), b1, b2)
