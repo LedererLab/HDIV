@@ -9,6 +9,7 @@
 #SBATCH --mail-type=ALL       # Type of email notification- BEGIN,END,FAIL,ALL
 #SBATCH --mail-user=dag89@uw.edu # Email to which notifications will be sent
 
+module load R
 config_dir=$1
 config_id=$2
 Rscript --vanilla $config_dir/configure.R $config_dir $config_id
