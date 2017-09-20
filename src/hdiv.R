@@ -1,8 +1,17 @@
 #!/usr/bin/env Rscript
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(MASS)
+library(mvtnorm)
+library(Matrix)
+library(methods)
+library(lpSolve)
+library(glmnet)
+source("kernel/DGM.R", chdir = TRUE)
+source("kernel/estimation.R", chdir = TRUE)
+source("kernel/utils.R", chdir = TRUE)
 source("kernel/trial.R", chdir = TRUE)
 
-trial(res_dir = "/homes/dag89/hdiv/res/")
-
-
-
+trial(res_dir = "/homes/dag89/hdiv/res2/")
