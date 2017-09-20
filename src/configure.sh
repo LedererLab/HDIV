@@ -6,7 +6,7 @@ if [[ ! -d out ]] ; then { mkdir out; }; fi
 
 nconfig=$(($(< config/configs.csv wc -l) - 1))
 for config_id in $(seq 1 $nconfig) ; do
-  if [[ ! -d res ]] ; then mkdir res fi
+  if [[ ! -d res ]] ; then mkdir res ; fi
   if [[ -f config/configure.r ]] ; then
     if [[ ! -d config/$config_id ]] ; then
       mkdir config/$config_id
