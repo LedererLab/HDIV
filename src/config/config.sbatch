@@ -12,4 +12,4 @@
 module load R
 config_dir=$1
 config_id=$2
-Rscript --vanilla $config_dir/configure.R $config_dir $config_id
+Rscript --vanilla $config_dir/configure.r $config_dir $config_id
