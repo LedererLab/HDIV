@@ -17,7 +17,7 @@ configure <- function() {
     filter(config_id == .config_id)
 
   src_dir <- dirname(config_dir)
-  source(paste(src_dir, "kernel/DGM.R", sep="/"), chdir = TRUE)
+  source(paste(src_dir, "dgm.r", sep="/"), chdir = TRUE)
 
   Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$s.j)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
