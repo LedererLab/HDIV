@@ -77,3 +77,12 @@ This will launch a series of Slurm jobs that each generate the model's regressio
 
 
 ### Running the simulations
+
+The present software uses the Slurm Workload Manager to run separate trials in parallel.
+To run the simulations for a contiguous range of configurations, first navigate to the `HDIV` directory.
+Then, use the `src/run.sh` script with first and second command line arguments denoting the first and last configuration numbers of the desired range.
+If the second argument is omitted, the range will be taken to consist solely of the first argument.
+An example usage is
+```
+src/run.sh 1 10
+```
