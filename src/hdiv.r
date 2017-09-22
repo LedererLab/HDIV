@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(dplyr)
-library(tidyr)
+# library(tidyr)
 library(purrr)
 library(MASS)
 library(mvtnorm)
