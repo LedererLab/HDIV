@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # if [[ $# -lt 1 ]] ; then { echo "Wrong number of arguments"; exit 1; }; fi
-if [[ ! -d err ]] ; then { mkdir err; }; fi
-if [[ ! -d out ]] ; then { mkdir out; }; fi
+if [[ ! -d err ]] ; then mkdir err ; fi
+if [[ ! -d out ]] ; then mkdir out ; fi
+if [[ ! -d res ]] ; then mkdir res ; fi
 
-nconfig=$(($(< config/configs.csv wc -l) - 1))
+nconfig=$(($(< configs/configs.csv wc -l) - 1))
 for config_id in $(seq 1 $nconfig) ; do
-  if [[ ! -d res ]] ; then mkdir res ; fi
-  if [[ -f config/configure.r ]] ; then
-    if [[ ! -d config/$config_id ]] ; then
-      mkdir config/$config_id
+  if [[ -f src/configure.r ]] ; then
+    if [[ ! -d configs/$config_id ]] ; then
+      mkdir configs/$config_id
     fi
-    sbatch config/config.sbatch config $config_id
+    sbatch src/configure.sbatch $config_id
   fi
 done

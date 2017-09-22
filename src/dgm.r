@@ -1,14 +1,3 @@
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-#########################################################################
-# Dependencies
-
-# library(dplyr)
-# library(tidyr)
-# library(purrr)
-# library(MASS)
-# library(mvtnorm)
-
 #########################################################################
 # Data-generating mechanism
 
@@ -123,7 +112,7 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
 # Generate observations
 
 .obs <- function(config_id.) {
-  configs <- read.csv("config/configs.csv")
+  configs <- read.csv("configs/configs.csv")
   config <- configs %>%
     filter(config_id == config_id.)
 
