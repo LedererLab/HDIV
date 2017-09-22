@@ -14,4 +14,4 @@ source("src/estimation.r", chdir = TRUE)
 source("src/utils.r", chdir = TRUE)
 source("src/trial.r", chdir = TRUE)
 
-trial(res_dir = "/homes/dag89/hdiv/res2/")
+trial()

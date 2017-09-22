@@ -7,7 +7,7 @@
 # source("estimation.R", chdir = TRUE)
 # source("utils.R", chdir = TRUE)
 
-trial <- function(res_dir, tau=1.1) {
+trial <- function(tau=1.1) {
   args = commandArgs(trailingOnly=TRUE)
   config_id <- args[1] %>% as.numeric
   trial_id <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
@@ -85,7 +85,6 @@ trial <- function(res_dir, tau=1.1) {
     lambda = rep(lambda, 2)
   )
 
-  write.csv(df_est, paste(res_dir, "/est", config_id, "_", trial_id, ".csv", sep=""))
-  write.csv(df_stats, paste(res_dir, "/stats", config_id, "_", trial_id, ".csv", sep=""))
-  # print(df_est)
+  write.csv(df_est, paste("res/est", config_id, "_", trial_id, ".csv", sep=""))
+  write.csv(df_stats, paste("res/stats", config_id, "_", trial_id, ".csv", sep=""))
 }
