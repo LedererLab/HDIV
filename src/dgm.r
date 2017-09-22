@@ -116,13 +116,13 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   config <- configs %>%
     filter(config_id == config_id.)
 
-  Alpha0 <- read.table(paste("config", config_id., "Alpha0", sep = "/")) %>%
+  Alpha0 <- read.table(paste("configs", config_id., "Alpha0", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
-  beta0 <- read.table(paste("config", config_id., "beta0", sep = "/")) %>%
+  beta0 <- read.table(paste("configs", config_id., "beta0", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
-  Sigma.hv <- read.table(paste("config", config_id., "Sigma.hv", sep = "/")) %>%
+  Sigma.hv <- read.table(paste("configs", config_id., "Sigma.hv", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
 

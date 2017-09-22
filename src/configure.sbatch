@@ -10,6 +10,5 @@
 #SBATCH --mail-user=dag89@uw.edu # Email to which notifications will be sent
 
 module load R
-config_dir=$1
-config_id=$2
-Rscript --vanilla $config_dir/configure.r $config_dir $config_id
+config_id=$1
+Rscript --vanilla src/configure.r $config_id

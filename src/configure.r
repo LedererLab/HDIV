@@ -11,7 +11,7 @@ suppressMessages(source("src/dgm.r"))
 configure <- function() {
   args = commandArgs(trailingOnly = TRUE)
   .config_id <- args[1] %>% as.numeric
-  configs <- read.csv("configs/config.csv")
+  configs <- read.csv("configs/configs.csv")
   config <- configs %>%
     filter(config_id == .config_id)
 
@@ -20,9 +20,9 @@ configure <- function() {
   Sigma.hv <- Sigma.hv.(config$px, config$sigma0_v, config$sigma0_h, config$cor_hv, config$corstr)
 
   # sprintf("Generating parameters for configuration %d", .config_id) %>% print
-  write.matrix(Alpha0, paste(config_dir, .config_id, "Alpha0", sep = "/"))
-  write.matrix(beta0, paste(config_dir, .config_id, "beta0", sep = "/"))
-  write.matrix(Sigma.hv, paste(config_dir, .config_id, "Sigma.hv", sep = "/"))
+  write.matrix(Alpha0, paste("configs", .config_id, "Alpha0", sep = "/"))
+  write.matrix(beta0, paste("configs", .config_id, "beta0", sep = "/"))
+  write.matrix(Sigma.hv, paste("configs", .config_id, "Sigma.hv", sep = "/"))
 }
 
 configure()
