@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 
+library(methods)
+# library(Matrix)
 library(dplyr)
 library(purrr)
 library(MASS)
 library(mvtnorm)
-library(Matrix)
-# library(methods)
 library(lpSolve)
 library(glmnet)
 source("src/dgm.r", chdir = TRUE)
