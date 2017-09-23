@@ -1,11 +1,5 @@
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
 #########################################################################
-# Dependencies
-
-# source("DGM.R", chdir = TRUE)
-# source("estimation.R", chdir = TRUE)
-# source("utils.R", chdir = TRUE)
+# Simulation trial
 
 trial <- function(tau=1.1) {
   args = commandArgs(trailingOnly=TRUE)
@@ -85,6 +79,6 @@ trial <- function(tau=1.1) {
     lambda = rep(lambda, 2)
   )
 
-  write.csv(df_est, paste("res/est", config_id, "_", trial_id, ".csv", sep=""))
-  write.csv(df_stats, paste("res/stats", config_id, "_", trial_id, ".csv", sep=""))
+  write.csv(df_est, paste("res/est_", config_id, "_", trial_id, ".csv", sep=""))
+  write.csv(df_stats, paste("res/stats_", config_id, "_", trial_id, ".csv", sep=""))
 }

@@ -1,12 +1,11 @@
 #!/usr/bin/env Rscript
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 library(dplyr)
-# library(tidyr)
 library(purrr)
 library(MASS)
 library(mvtnorm)
 library(Matrix)
-library(methods)
+# library(methods)
 library(lpSolve)
 library(glmnet)
 source("src/dgm.r", chdir = TRUE)
