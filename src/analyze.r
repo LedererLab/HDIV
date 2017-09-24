@@ -44,7 +44,7 @@ cvg <-function(res) {
     arrange(type)
 }
 
-ingest() %>% cvg %>% print
+ingest() %>% cvg %>% print(n=Inf)
 
 
 # ingest() %>%
