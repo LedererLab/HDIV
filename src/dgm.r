@@ -127,7 +127,7 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
     { dimnames(.) <- NULL; . }
 
   Sigma_z.Z <- .Sigma_z.Z(n = config$n, pz = config$pz, type = config$type)
-  Z <- Sigma_z.Z$Z
+  Sigma_z <- Sigma_z.Z$Sigma_z; Z <- Sigma_z.Z$Z
   D <- .D(Z, Alpha0)
 
   X.y <- .X.y(D, beta0, Sigma.hv = Sigma.hv)
@@ -135,6 +135,6 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
 
   obs <- list(y = y, X = X, Z = Z,
               sigma0_h = config$sigma0_h, sigma0_v = config$sigma0_v,
-              beta0 = beta0)
+              beta0 = beta0, Sigma_z=Sigma_z, Alpha0=Alpha0)
   obs
 }

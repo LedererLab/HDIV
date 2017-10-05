@@ -136,7 +136,13 @@ find_mu <- function(Sigma.hat) {
   mus
 }
 
-.Theta.hat <- function(Sigma.hat, mus) {
+.Theta.hat_JM <- function(Sigma.hat, n) {
+  Theta.hat <- InverseLinfty(Sigma.hat, n)
+  Theta.hat
+}
+
+
+.Theta.hat_CLIME <- function(Sigma.hat, mus) {
   px <- ncol(Sigma.hat)
   # ncores <- 100
   # cl <- makeCluster(ncores, type="FORK")
@@ -204,16 +210,26 @@ find_mu <- function(Sigma.hat) {
   beta_debiased
 }
 
-h.hat2. <-function(Sigma_dhat, Thetahat) {
-  (Thetahat %*% Sigma_dhat %*% t(Thetahat)) %>% diag %>% sqrt
+#########################################################################
+# Standard errors
+
+# SE1
+# This is given by sigma_u.hat * theta_j^T * Sigma_d.hat * theta_j
+.SE1 <-function(Sigma_d.hat, Theta.hat, sd_u.hat) {
+  (Theta.hat %*% Sigma_d.hat %*% t(Theta.hat)) %>% diag %>% sqrt
 }
 
-h.hat1. <- function(D.hat, Theta.hat, u.hat) {
+# SE2
+# This is given by E_n[{theta_j, d_i}^2u_i^2] %>% sqrt
+.SE2 <- function(D.hat, Theta.hat, u.hat) {
   # n <- length(u.hat); p <- ncol(D.hat)
   (Theta.hat %*% t(D.hat)) %>%
     apply(1, function(X) { mean(X^2 * u.hat^2) }) %>%
     sqrt
 }
 
-# De-biased second-stage Lasso standard errors
-.SE <- function(vhat, sigma0_u.hat, u.hat) { vhat * sigma0_u.hat / sqrt(n) }
+# SE3
+# This is given by sigma_u.hat *
+.SE3 <- function(Theta.hat, sd_u.hat) {
+  diag(Theta.hat) * sd_u.hat
+}
