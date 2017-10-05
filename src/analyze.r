@@ -8,8 +8,13 @@ suppressMessages(library(dplyr))
 suppressMessages(library(xtable))
 suppressMessages(source("src/utils.r"))
 
+options(tibble.width = Inf)
+
 #########################################################################
 # Analysis
+
+#########################################################################
+# Data ingestion
 
 ingest <- function() {
   est <- read.csv("res/est.csv")
@@ -19,22 +24,25 @@ ingest <- function() {
   list(est = est, stats = stats, configs = configs)
 }
 
+#########################################################################
+# Coverage
+
 cvg <-function(res) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
-    filter(estimator == "Debiased") %>%
+    filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     inner_join(dplyr::select(configs, config_id, n, sigma0_h),
                by = "config_id") %>%
-    inner_join(filter(stats, estimator == "Debiased") %>%
-                 dplyr::select(config_id, trial_id),
-               by = c("config_id", "trial_id")) %>%
-    mutate(cvgj = covered(estimate_j, beta0_j, SE1.la)) %>%
-    group_by(config_id, j) %>%
+    # inner_join(filter(stats, estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
+    #            dplyr::select(config_id, trial_id),
+    #            by = c("config_id", "trial_id", "estimator")) %>%
+    mutate(cvgj = covered(estimate_j, beta0_j, SE3)) %>%
+    group_by(estimator, config_id, j) %>%
     summarize(cvgj = mean(cvgj),
               ntrials = n()) %>%
       # sdj = sd(estimate_j),
               # SEj = mean(SE1.la)) %>%
-    group_by(config_id) %>%
+    group_by(estimator, config_id) %>%
     summarize(cvg = mean(cvgj),
               ntrials = mean(ntrials)) %>%
               # SE = mean(SEj),
