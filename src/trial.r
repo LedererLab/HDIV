@@ -19,7 +19,7 @@ trial <- function(tau=1.1) {
 
   # second-stage estimation
   D.hat <- Z %*% Alpha0hat
-  lambda.beta_Lasso <- .lambda.beta_Lasso(y, D.hat, sigma0_h)
+  lambda.beta_Lasso <- .lambda.beta_Lasso(y, D.hat, sigma0_h, no_pen_ids=c(1,2))
   lambda <- lambda.beta_Lasso$lambda; beta_Lasso_D.hat <- lambda.beta_Lasso$beta_Lasso
 
   # relaxed inverse estimation
@@ -102,7 +102,7 @@ trial <- function(tau=1.1) {
   # )
   df_stats <- data.frame(
     config_id = rep(config_id, 2),
-    trial_id = rep(trial_id, 32,
+    trial_id = rep(trial_id, 32),
     estimator = c("Debiased_CLIME", "Lasso"),
     mse = c(mse_Debiased_CLIME, mse_Lasso_D.hat),
     sd_u = rep(sd_u.hat, 2),
