@@ -64,7 +64,7 @@ trial <- function(tau=1.1) {
   df_est <- data.frame(
     config_id = rep(config_id, 2*px),
     trial_id = rep(trial_id, 2*px),
-    estimator = c(rep("Debiased_CLIME", px), rep("Debiased_JM", px), rep("Lasso", px)),
+    estimator = c(rep("Debiased_CLIME", px), rep("Lasso", px)),
     j = rep(1:px, 2),
     estimate_j = c(beta_debiased_CLIME, beta_Lasso_D.hat),
     beta0_j = rep(beta0, 2),
