@@ -37,7 +37,7 @@ trial <- function(tau=1.1) {
   sd_u.hat <- u.hat^2 %>% mean %>% sqrt
 
   # To record/compute estimate of Theta_jj (and Theta_jj)
-  Theta <- t(Alpha0) %*% Sigma_z %*% Alpha0
+  Theta <- solve(t(Alpha0) %*% Sigma_z %*% Alpha0)
 
   # estimator data
   # df_est <- data.frame(
