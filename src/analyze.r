@@ -80,7 +80,7 @@ diagnose.sd_u <- function(res) {
     dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, sd_u.hat)
 }
 
-mse_beta <- funciton(res) {
+mse_beta <- function(res) {
   res$est %>%
     filter(estimator == "Lasso") %>%
     mutate(bias = estimate_j - beta0_j) %>%
