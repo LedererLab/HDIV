@@ -231,5 +231,5 @@ find_mu <- function(Sigma.hat) {
 # SE3
 # This is given by sigma_u.hat *
 .SE3 <- function(Theta.hat, sd_u.hat) {
-  diag(Theta.hat) * sd_u.hat
+  sqrt(diag(Theta.hat)) * sd_u.hat
 }
