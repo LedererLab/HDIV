@@ -36,7 +36,8 @@ cvg <-function(res) {
     # inner_join(filter(stats, estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     #            dplyr::select(config_id, trial_id),
     #            by = c("config_id", "trial_id", "estimator")) %>%
-    mutate(cvgj = covered(estimate_j, beta0_j, SE3)) %>%
+    mutate(cvgj = covered(estimate_j, beta0_j,
+                          SE1/sqrt(n))) %>%
     group_by(estimator, config_id, j) %>%
     summarize(cvgj = mean(cvgj),
               ntrials = n()) %>%
@@ -52,7 +53,51 @@ cvg <-function(res) {
     arrange(type)
 }
 
-ingest() %>% cvg %>% print(n=Inf)
+diagnose.Theta <- function(res) {
+  est <- res$est; stats <- res$stats; configs <- res$configs
+  est %>%
+    filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
+    inner_join(dplyr::select(configs, config_id, n, sigma0_h),
+             by = "config_id") %>%
+    mutate(
+      bias.Theta_jj = Theta.hat_jj-Theta_jj
+    ) %>%
+    group_by(config_id, j) %>%
+    summarize(
+      Theta_jj = mean(Theta_jj),
+      Theta.hat_jj = mean(Theta.hat_jj),
+      bias.Theta_jj = Theta.hat_jj-Theta_jj
+    )
+}
+
+diagnose.sd_u <- function(res) {
+  est <- res$est; stats <- res$stats; configs <- res$configs
+  stats %>%
+    filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
+    group_by(config_id) %>%
+    summarize(sd_u.hat = mean(sd_u)) %>%
+    inner_join(configs, by = "config_id") %>%
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, sd_u.hat)
+}
+
+mse_beta <- funciton(res) {
+  res$est %>%
+    filter(estimator == "Lasso") %>%
+    mutate(bias = estimate_j - beta0_j) %>%
+    group_by(config_id, trial_id) %>%
+    summarize(mse = mean(bias^2)) %>%
+    group_by(config_id) %>%
+    summarize(avg_mse = mean(mse)) %>%
+    inner_join(configs, by = "config_id") %>%
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, avg_mse)
+}
+
+res <- ingest()
+res %>% cvg %>% print(n=Inf)
+res %>% diagnose.Theta %>% print(n=Inf)
+res %>% diagnose.sd_u %>% print(n=Inf)
+res %>% mse_beta %>% print(n=Inf)
+
 
 
 # ingest() %>%
