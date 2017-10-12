@@ -72,7 +72,7 @@ trial <- function(tau=1.1) {
     mu_stars = c(mu_stars_CLIME, mu_stars_JM, rep(NA, px)),
     objs = c(objs_CLIME, objs_JM, rep(NA, px)),
     lambda_j = rep(lambda_j, 3)
-  # )
+  )
   # df_est <- data.frame(
   #   config_id = rep(config_id, 2*px),
   #   trial_id = rep(trial_id, 2*px),
