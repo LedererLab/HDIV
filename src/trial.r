@@ -70,7 +70,7 @@ trial <- function(tau=1.1) {
     Theta_jj = c(diag(Theta), diag(Theta), rep(NA, px)),
     Theta.hat_jj = c(diag(Theta.hat_CLIME), diag(Theta.hat_JM), rep(NA, px)),
     mu_stars = c(mu_stars_CLIME, mu_stars_JM, rep(NA, px)),
-    objs = c(objs_CLIME, objs_JM, rep(NA, px))
+    objs = c(objs_CLIME, objs_JM, rep(NA, px)),
     lambda_j = rep(lambda_j, 3)
   # )
   # df_est <- data.frame(
