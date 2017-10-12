@@ -41,7 +41,7 @@ trial <- function(tau=1.1) {
 
   # de-biased second-stage lasso estimation
   beta_debiased_CLIME <- .beta_debiased(y, X, D.hat, beta_Lasso_D.hat, Theta.hat_CLIME)
-  # beta_debiased_JM <- .beta_debiased(y, X, D.hat, beta_Lasso_D.hat, Theta.hat_JM)
+  beta_debiased_JM <- .beta_debiased(y, X, D.hat, beta_Lasso_D.hat, Theta.hat_JM)
 
   # Predict the second-stage noise
   u.hat <- y - X %*% beta_Lasso_D.hat
@@ -96,9 +96,9 @@ trial <- function(tau=1.1) {
 
   # statistics
   mu_star_CLIME <- (Theta.hat_CLIME %*% Sigma_d.hat - diag(1, ncol(Sigma_d.hat))) %>% abs %>% max
-  # mu_star_JM <- (Theta.hat_JM %*% Sigma_d.hat - diag(1, ncol(Sigma_d.hat))) %>% abs %>% max
+  mu_star_JM <- (Theta.hat_JM %*% Sigma_d.hat - diag(1, ncol(Sigma_d.hat))) %>% abs %>% max
   mse_Debiased_CLIME <- (y - X %*% beta_debiased_CLIME)^2 %>% mean
-  # mse_Debiased_JM <- (y - X %*% beta_debiased_JM)^2 %>% mean
+  mse_Debiased_JM <- (y - X %*% beta_debiased_JM)^2 %>% mean
   mse_Lasso_D.hat <- (y - X %*% beta_Lasso_D.hat)^2 %>% mean
 
   # estimation statistics data
