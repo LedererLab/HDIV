@@ -216,7 +216,7 @@ find_mu <- function(Sigma.hat) {
 # SE1
 # This is given by sigma_u.hat * theta_j^T * Sigma_d.hat * theta_j
 .SE1 <-function(Sigma_d.hat, Theta.hat, sd_u.hat) {
-  (Theta.hat %*% Sigma_d.hat %*% t(Theta.hat)) %>% diag %>% sqrt
+  sd_u.hat * (Theta.hat %*% Sigma_d.hat %*% t(Theta.hat)) %>% diag %>% sqrt
 }
 
 # SE2
