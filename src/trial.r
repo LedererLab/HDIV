@@ -26,6 +26,11 @@ trial <- function(tau=1.1) {
   Sigma_d.hat <- .Sigmahat(D.hat)
   mus <- find_mu(Sigma_d.hat) * tau
   Theta.hat_CLIME <- .Theta.hat_CLIME(Sigma_d.hat, mus)
+  Id <- diag(1, px) # Identity matrix
+  mu_stars_CLIME <- map_dbl(1:px,
+    ~ { (Sigma_d.hat %*% Theta.hat[.,] - Id[.,]) %>% abs %>% max})
+  objs_CLIME <- map_dbl(1:px,
+    ~ { Theta.hat[.,] %>% abs %>% sum })
   # Theta.hat_JM <- .Theta.hat_JM(Sigma_d.hat, n)
 
   # de-biased second-stage lasso estimation
@@ -76,6 +81,8 @@ trial <- function(tau=1.1) {
             rep(NA, px)),
     Theta_jj = c(diag(Theta), rep(NA, px)),
     Theta.hat_jj = c(diag(Theta.hat_CLIME), rep(NA, px)),
+    mu_stars = c(mu_stars_CLIME, rep(NA, px)),
+    objs = c(objs_CLIME, rep(NA, px))
     # vhat = rep(vhat, 2),
     lambda_j = rep(lambda_j, 2)
   )
