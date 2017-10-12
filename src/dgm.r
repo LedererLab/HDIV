@@ -11,8 +11,8 @@
 
 # ... - arguments to alpha0_j:
 #   pz, a, sj.min, sj.max
-.Alpha0 <- function(px, ...) {
-  Alpha0 <- map(1:px, ~ { .alpha0_j(...) }) %>%
+.Alpha0 <- function(px, pz, a, s.j) {
+  Alpha0 <- map(1:px, ~ { .alpha0_j(pz, a, s.j) }) %>%
     reduce(cbind) %>%
     { dimnames(.) <- NULL; . }
   Alpha0
