@@ -6,7 +6,7 @@ trial <- function(tau=1.1) {
   config_id <- args[1] %>% as.numeric
   trial_id <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
   obs <- .obs(config_id)
-  y <- obs$y; X <- obs$X; Z <- obs$Z; D <- obs$D; u = obs$u
+  y <- obs$y; X <- obs$X; Z <- obs$Z; D <- obs$D; u <- obs$u
   n <- nrow(X); px <- ncol(X); pz <- ncol(Z)
   Sigma_z <- obs$Sigma_z
   Alpha0 <- obs$Alpha0
@@ -57,8 +57,8 @@ trial <- function(tau=1.1) {
   rem_2_JM <- Theta.hat_JM%*%t(D.hat-D)%*%u/sqrt(n)
   rem_3_CLIME <- Theta.hat_CLIME%*%t(D.hat)%*%(X-D.hat)%*%(beta_Lasso_D.hat-beta0)/sqrt(n)
   rem_3_JM <- Theta.hat_JM%*%t(D.hat)%*%(X-D.hat)%*%(beta_Lasso_D.hat-beta0)/sqrt(n)
-  rem_4_CLIME <-sqrt(n)(Theta.hat_CLIME%*%Sigma_d.hat-Id)%*%(beta_Lasso_D.hat-beta0)
-  rem_4_JM <-sqrt(n)(Theta.hat_JM%*%Sigma_d.hat-Id)%*%(beta_Lasso_D.hat-beta0)
+  rem_4_CLIME <-sqrt(n)*(Theta.hat_CLIME%*%Sigma_d.hat-Id)%*%(beta_Lasso_D.hat-beta0)
+  rem_4_JM <-sqrt(n)*(Theta.hat_JM%*%Sigma_d.hat-Id)%*%(beta_Lasso_D.hat-beta0)
 
   # Calculate main term
   w <- Theta%*%t(D)%*%u/sqrt(n)
