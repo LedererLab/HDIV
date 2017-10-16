@@ -84,11 +84,11 @@ trial <- function(tau=1.1) {
     Theta.hat_jj = c(diag(Theta.hat_CLIME), diag(Theta.hat_JM), rep(NA, px)),
     mu_stars = c(mu_stars_CLIME, mu_stars_JM, rep(NA, px)),
     objs = c(objs_CLIME, objs_JM, rep(NA, px)),
-    w = w,
-    rem_1 = c(rem_1_CLIME, rem_1_JM),
-    rem_2 = c(rem_2_CLIME, rem_2_JM),
-    rem_3 = c(rem_3_CLIME, rem_3_JM),
-    rem_4 = c(rem_4_CLIME, rem_4_JM),
+    w = c(w, w, rep(NA, px)),
+    rem_1 = c(rem_1_CLIME, rem_1_JM, rep(NA, px)),
+    rem_2 = c(rem_2_CLIME, rem_2_JM, rep(NA, px)),
+    rem_3 = c(rem_3_CLIME, rem_3_JM, rep(NA, px)),
+    rem_4 = c(rem_4_CLIME, rem_4_JM, rep(NA, px)),
     lambda_j = rep(lambda_j, 3)
   )
   # df_est <- data.frame(
