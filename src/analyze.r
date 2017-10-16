@@ -101,12 +101,14 @@ diagnose_rems <- function(res) {
                by = "config_id") %>%
     mutate(z_j = w/sqrt(Theta_jj),
            cvg_j = ((z_j >= -1.96) & (z_j <= 1.96))) %>%
-    group_by(config_id) %>%
+    group_by(estimator, config_id) %>%
     summarize(cvg = mean(cvg_j),
               avg_rem_1 = mean(abs(rem_1)),
               avg_rem_2 = mean(abs(rem_2)),
               avg_rem_3 = mean(abs(rem_3)),
-              avg_rem_4 = mean(abs(rem_4)))
+              avg_rem_4 = mean(abs(rem_4))) %>%
+    inner_join(configs, by = "config_id") %>%
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, cvg, avg_rem_1, avg_rem_2, avg_rem_3, avg_rem_4, ntrials)
 }
 
 res <- ingest()
@@ -114,7 +116,7 @@ res %>% cvg %>% print(n=Inf)
 # res %>% diagnose.Theta %>% print(n=Inf)
 res %>% diagnose.sd_u %>% print(n=Inf)
 res %>% mse_beta %>% print(n=Inf)
-res %>% diagnose_rems(res) %>% print(n=Inf)
+res %>% diagnose_rems %>% print(n=Inf)
 
 
 # ingest() %>%
