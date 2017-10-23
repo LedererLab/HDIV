@@ -1,4 +1,4 @@
-"","config_id","n","px","pz","id","s_beta","s.j","b","a","sigma0_h","sigma0_v","cor_hv","type","corstr"
+"","config_id","n","px","pz","id","s_beta","s.j","b","a","sigma0_u","sigma0_v","cor_hv","type","corstr"
 "1","1",100,125,150,1,3,5,1,1,1,1,0.9,"CS","c1"
 "2","2",100,125,150,1,3,5,1,1,1,1,0.9,"TZ","c1"
 "3","3",100,125,150,1,3,5,1,1,1,1,0.5,"CS","c1"
