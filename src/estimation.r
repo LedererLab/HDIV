@@ -57,7 +57,7 @@
 }
 
 # Second-stage
-.lambda.beta_Lasso <- function(y, Dhat, sigma0_h, tune_type = "CV", no_pen_ids = c()) {
+.lambda.beta_Lasso <- function(y, Dhat, sigma0_u, tune_type = "CV", no_pen_ids = c()) {
   px <- ncol(Dhat)
   if ( length(no_pen_ids)==0 ) {
     penalties <- rep(1, px)
@@ -70,7 +70,7 @@
            beta_Lasso = as.numeric(coef(., s = "lambda.min"))[2:(px+1)]) }
   } else {
     if ( tune_type == "infeasible" ) {
-      sigma0_u.hat <- sigma0_h
+      sigma0_u.hat <- sigma0_u
     } else if ( tune_type == "feasible" ) {
       # ...
     }

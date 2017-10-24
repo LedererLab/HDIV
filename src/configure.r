@@ -17,12 +17,12 @@ configure <- function() {
 
   Alpha0 <- .Alpha0(config$px, config$pz, config$a, config$s.j)
   beta0 <- .beta0(config$px, config$b, config$s_beta)
-  Sigma.hv <- Sigma.hv.(config$px, config$sigma0_v, config$sigma0_h, config$cor_hv, config$corstr)
+  Sigma.uv <- Sigma.uv.(config$px, config$sigma0_v, config$sigma0_u)
 
   # sprintf("Generating parameters for configuration %d", .config_id) %>% print
   write.matrix(Alpha0, paste("configs", .config_id, "Alpha0", sep = "/"))
   write.matrix(beta0, paste("configs", .config_id, "beta0", sep = "/"))
-  write.matrix(Sigma.hv, paste("configs", .config_id, "Sigma.hv", sep = "/"))
+  write.matrix(Sigma.uv, paste("configs", .config_id, "Sigma.uv", sep = "/"))
 }
 
 configure()
