@@ -31,13 +31,13 @@ cvg <-function(res) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
-    inner_join(dplyr::select(configs, config_id, n, sigma0_h),
+    inner_join(dplyr::select(configs, config_id, n, sigma0_u),
                by = "config_id") %>%
     # inner_join(filter(stats, estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     #            dplyr::select(config_id, trial_id),
     #            by = c("config_id", "trial_id", "estimator")) %>%
     mutate(cvgj = covered(estimate_j, beta0_j,
-                          SE2/sqrt(n))) %>%
+                          SE3/sqrt(n))) %>%
     group_by(estimator, config_id, j) %>%
     summarize(cvgj = mean(cvgj),
               ntrials = n()) %>%
@@ -57,7 +57,7 @@ diagnose.Theta <- function(res) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
-    inner_join(dplyr::select(configs, config_id, n, sigma0_h),
+    inner_join(dplyr::select(configs, config_id, n, sigma0_u),
              by = "config_id") %>%
     mutate(
       bias.Theta_jj = Theta.hat_jj-Theta_jj
@@ -97,7 +97,7 @@ diagnose_rems <- function(res) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
-    inner_join(dplyr::select(configs, config_id, n, sigma0_h),
+    inner_join(dplyr::select(configs, config_id, n, sigma0_u),
                by = "config_id") %>%
     mutate(z_j = w/sqrt(Theta_jj),
            cvg_j = ((z_j >= -1.96) & (z_j <= 1.96))) %>%
@@ -108,7 +108,7 @@ diagnose_rems <- function(res) {
               avg_rem_3 = mean(abs(rem_3)),
               avg_rem_4 = mean(abs(rem_4))) %>%
     inner_join(configs, by = "config_id") %>%
-    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, cvg, avg_rem_1, avg_rem_2, avg_rem_3, avg_rem_4, ntrials)
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, cvg, avg_rem_1, avg_rem_2, avg_rem_3, avg_rem_4)
 }
 
 res <- ingest()
