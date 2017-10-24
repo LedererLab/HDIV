@@ -67,6 +67,8 @@ Sigma.uv. <- function(px, sigma0_v, sigma0_u) {
   V <- diag(sigma0_v, px)
   rbind(c(sigma0_u, v),
         cbind(v, V))
+  dimnames(V) <- NULL
+  V
 }
 
 # ... = sigma0_v, sigma0_u, cor_hv, corstr
