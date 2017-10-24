@@ -65,10 +65,10 @@ Sigma.uv. <- function(px, sigma0_v, sigma0_u) {
   v <- c(.5*b, rep(.25*b, r-1), rep(.25*b, r), rep(.05*b, px-2*r)) %>%
     sample
   V <- diag(sigma0_v, px)
-  rbind(c(sigma0_u, v),
+  Sigma_uv <- rbind(c(sigma0_u, v),
         cbind(v, V))
-  dimnames(V) <- NULL
-  V
+  dimnames(Sigma_uv) <- NULL
+  Sigma_uv
 }
 
 # ... = sigma0_v, sigma0_u, cor_hv, corstr
