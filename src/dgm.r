@@ -26,7 +26,6 @@
   beta0
 }
 
-
 # types: (1) "TZ" (Toeplitz), (2) "CS" (circulant-symmetic),
 # (3) "ID" (identity), (4) "RN" (scaled Gram of m draws from multivariate-p Normal)
 .Sigma_z <- function(pz, type, rho0 = .7, K = 5, m = 2*pz){
@@ -60,34 +59,21 @@
   Sigma_z
 }
 
-# hvcorstr: "
-Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
-  sigma0_hv <- sigma0_v * sigma0_h * cor_hv
-  if ( length(sigma0_v == 1) ) {
-    Sigma0_v <- diag(sigma0_v^2, px)
-  } else if ( length(sigma0_v == px) ) {
-    Sigma0_v <- diag(sigma0_v^2)
-  } else { simpleError("Unsuitable length for sigma0_v") }
-
-  if ( corstr == "c1" ) {
-    corstr. <- rep(1, px)
-  } else if (corstr == "c2") {
-    corstr. <- runif(px, min = .9, max = 1.1)
-  } else {
-    # ...
-  }
-
-  top <- c(sigma0_h^2, sigma0_hv * corstr.)
-  bottom <- cbind(sigma0_hv * corstr., Sigma0_v)
-  Sigma_hv <- rbind(top, bottom)
-  Sigma_hv
+Sigma.uv. <- function(px, sigma0_v, sigma0_u) {
+  r <- 5
+  b <- sigma0_u*sigma0_v
+  v <- c(.5*b, rep(.25*b, r-1), rep(.25*b, r), rep(.05*b, px-2*r)) %>%
+    sample
+  V <- diag(sigma0_v, px)
+  rbind(c(sigma0_u, v),
+        cbind(v, V))
 }
 
-# ... = sigma0_v, sigma0_h, cor_hv, corstr
-.hV <- function(n, Sigma.hv) {
+# ... = sigma0_v, sigma0_u, cor_hv, corstr
+.uV <- function(n, Sigma.uv) {
   # Sigma_hv <- .Sigma_hv(px, ...)
-  hV <- rmvnorm(n, rep(0, ncol(Sigma.hv)), Sigma.hv, method = "svd")
-  list(h = hV[,1], V = hV[,2:ncol(hV)])
+  uV <- rmvnorm(n, rep(0, ncol(Sigma.uv)), Sigma.uv)
+  list(u = uV[,1], V = uV[,2:ncol(uV)])
 }
 
 .Sigma_z.Z <- function(n, pz, type, ...) {
@@ -98,14 +84,14 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
 
 .D <- function(Z, Alpha0) { Z %*% Alpha0 }
 
-# ... = sigma0_v, sigma0_h, cor_hv, corstr
-.X.y <- function(D, beta0, Sigma.hv) {
+# ... = sigma0_v, sigma0_u, cor_hv, corstr
+.X.y <- function(D, beta0, Sigma.uv) {
   n <- nrow(D); px <- ncol(D)
-  hV <- .hV(n, Sigma.hv)
-  h <- hV$h; V <- hV$V;
+  uV <- .uV(n, Sigma.uv)
+  u <- uV$u; V <- uV$V;
   X <- D + V
-  y <- X %*% beta0 + h
-  list(X = X, y = y, V = V, h = h)
+  y <- X %*% beta0 + u
+  list(X = X, y = y, V = V, u = u)
 }
 
 #########################################################################
@@ -122,7 +108,7 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   beta0 <- read.table(paste("configs", config_id., "beta0", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
-  Sigma.hv <- read.table(paste("configs", config_id., "Sigma.hv", sep = "/")) %>%
+  Sigma.uv <- read.table(paste("configs", config_id., "Sigma.uv", sep = "/")) %>%
     as.matrix %>%
     { dimnames(.) <- NULL; . }
 
@@ -130,11 +116,11 @@ Sigma.hv. <- function(px, sigma0_v, sigma0_h, cor_hv, corstr) {
   Sigma_z <- Sigma_z.Z$Sigma_z; Z <- Sigma_z.Z$Z
   D <- .D(Z, Alpha0)
 
-  X.y <- .X.y(D, beta0, Sigma.hv = Sigma.hv)
+  X.y <- .X.y(D, beta0, Sigma.uv = Sigma.uv)
   X <- X.y$X; y <- X.y$y
 
   obs <- list(y = y, X = X, Z = Z, D = D, u = X.y$h,
-              sigma0_h = config$sigma0_h, sigma0_v = config$sigma0_v,
+              sigma0_u = config$sigma0_u, sigma0_v = config$sigma0_v,
               beta0 = beta0, Sigma_z=Sigma_z, Alpha0=Alpha0)
   obs
 }
