@@ -31,13 +31,14 @@ cvg <-function(res) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
-    inner_join(dplyr::select(configs, config_id, n, sigma0_u),
+    inner_join(dplyr::select(configs, config_id, n, sigma0_u, sigma0_v),
                by = "config_id") %>%
+    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
     # inner_join(filter(stats, estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     #            dplyr::select(config_id, trial_id),
     #            by = c("config_id", "trial_id", "estimator")) %>%
     mutate(cvgj = covered(estimate_j, beta0_j,
-                          SE3/sqrt(n))) %>%
+                          sqrt(.7*Theta_jj)/sqrt(n))) %>%
     group_by(estimator, config_id, j) %>%
     summarize(cvgj = mean(cvgj),
               ntrials = n()) %>%
@@ -49,7 +50,7 @@ cvg <-function(res) {
               # SE = mean(SEj),
               # sd = mean(sdj)) %>%
     inner_join(configs, by = "config_id") %>%
-    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, cvg, ntrials) %>%
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, type, cvg, sigma0_u, sigma0_v, ntrials) %>%
     arrange(type)
 }
 
@@ -57,17 +58,20 @@ diagnose.Theta <- function(res) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
-    inner_join(dplyr::select(configs, config_id, n, sigma0_u),
-             by = "config_id") %>%
     mutate(
       bias.Theta_jj = Theta.hat_jj-Theta_jj
     ) %>%
-    group_by(config_id, j) %>%
+    group_by(estimator, config_id) %>%
     summarize(
-      Theta_jj = mean(Theta_jj),
-      Theta.hat_jj = mean(Theta.hat_jj),
-      bias.Theta_jj = Theta.hat_jj-Theta_jj
-    )
+      # Theta_jj = mean(Theta_jj),
+      # Theta.hat_jj = mean(Theta.hat_jj),
+      avg_bias.Theta_jj = mean(bias.Theta_jj),
+      max_abs_bias.Theta_jj = max(abs(bias.Theta_jj))
+    ) %>%
+    inner_join(dplyr::select(configs, config_id, n, n, px, pz, s_beta, s.j, type, sigma0_u, sigma0_v),
+             by = "config_id") %>%
+    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
+    arrange(estimator, type)
 }
 
 diagnose.sd_u <- function(res) {
@@ -77,7 +81,8 @@ diagnose.sd_u <- function(res) {
     group_by(config_id) %>%
     summarize(sd_u.hat = mean(sd_u)) %>%
     inner_join(configs, by = "config_id") %>%
-    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, sd_u.hat)
+    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, type, sd_u.hat, sigma0_u)
 }
 
 mse_beta <- function(res) {
@@ -90,7 +95,8 @@ mse_beta <- function(res) {
     group_by(config_id) %>%
     summarize(avg_mse = mean(mse)) %>%
     inner_join(configs, by = "config_id") %>%
-    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, avg_mse)
+    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, type, avg_mse)
 }
 
 diagnose_rems <- function(res) {
@@ -113,7 +119,7 @@ diagnose_rems <- function(res) {
 
 res <- ingest()
 res %>% cvg %>% print(n=Inf)
-# res %>% diagnose.Theta %>% print(n=Inf)
+res %>% diagnose.Theta %>% print(n=Inf)
 res %>% diagnose.sd_u %>% print(n=Inf)
 res %>% mse_beta %>% print(n=Inf)
 res %>% diagnose_rems %>% print(n=Inf)
