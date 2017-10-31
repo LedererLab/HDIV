@@ -38,7 +38,7 @@ cvg <-function(res) {
     #            dplyr::select(config_id, trial_id),
     #            by = c("config_id", "trial_id", "estimator")) %>%
     mutate(cvgj = covered(estimate_j, beta0_j,
-                          sqrt(.7*Theta_jj)/sqrt(n))) %>%
+                          SE3/sqrt(n))) %>%
     group_by(estimator, config_id, j) %>%
     summarize(cvgj = mean(cvgj),
               ntrials = n()) %>%

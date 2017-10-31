@@ -19,7 +19,7 @@ trial <- function(tau=1.1) {
 
   # second-stage estimation
   D.hat <- Z %*% Alpha0hat
-  lambda.beta_Lasso <- .lambda.beta_Lasso(y, D.hat, sigma0_u, no_pen_ids=c(1,2))
+  lambda.beta_Lasso <- .lambda.beta_Lasso(y, D.hat, sigma0_u, no_pen_ids=c())
   lambda <- lambda.beta_Lasso$lambda; beta_Lasso_D.hat <- lambda.beta_Lasso$beta_Lasso
 
   # relaxed inverse estimation
