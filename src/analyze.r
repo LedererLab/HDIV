@@ -33,7 +33,7 @@ cvg <-function(res) {
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     inner_join(dplyr::select(configs, config_id, n, sigma0_u, sigma0_v),
                by = "config_id") %>%
-    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
+    filter(sigma0_u == 0.1, sigma0_v == 0.7) %>%
     # inner_join(filter(stats, estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     #            dplyr::select(config_id, trial_id),
     #            by = c("config_id", "trial_id", "estimator")) %>%
@@ -105,7 +105,7 @@ diagnose_rems <- function(res) {
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     inner_join(dplyr::select(configs, config_id, n, sigma0_u),
                by = "config_id") %>%
-    mutate(z_j = w/sqrt(Theta_jj),
+    mutate(z_j = w/(sqrt(sigma0_u*Theta_jj)),
            cvg_j = ((z_j >= -1.96) & (z_j <= 1.96))) %>%
     group_by(estimator, config_id) %>%
     summarize(cvg = mean(cvg_j),
@@ -114,7 +114,8 @@ diagnose_rems <- function(res) {
               avg_rem_3 = mean(abs(rem_3)),
               avg_rem_4 = mean(abs(rem_4))) %>%
     inner_join(configs, by = "config_id") %>%
-    dplyr::select(config_id, n, px, pz, s_beta, s.j, cor_hv, type, cvg, avg_rem_1, avg_rem_2, avg_rem_3, avg_rem_4)
+    dplyr::select(config_id, n, px, pz, s_beta, s.j, type, cvg, avg_rem_1, avg_rem_2, avg_rem_3, avg_rem_4) %>%
+    arrange(estimator, type)
 }
 
 res <- ingest()
