@@ -27,13 +27,13 @@ ingest <- function() {
 #########################################################################
 # Coverage
 
-cvg <-function(res) {
+cvg <-function(res, .sigma0_u=0.7, .sigma0_v=0.7) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     inner_join(dplyr::select(configs, config_id, n, sigma0_u, sigma0_v),
                by = "config_id") %>%
-    filter(sigma0_u == 0.1, sigma0_v == 0.7) %>%
+    filter(sigma0_u == .sigma0_u, sigma0_v == .sigma0_v) %>%
     # inner_join(filter(stats, estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     #            dplyr::select(config_id, trial_id),
     #            by = c("config_id", "trial_id", "estimator")) %>%
@@ -54,7 +54,7 @@ cvg <-function(res) {
     arrange(type)
 }
 
-diagnose.Theta <- function(res) {
+diagnose.Theta <- function(res, .sigma0_u=0.7, .sigma0_v=0.7) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
@@ -70,22 +70,22 @@ diagnose.Theta <- function(res) {
     ) %>%
     inner_join(dplyr::select(configs, config_id, n, n, px, pz, s_beta, s.j, type, sigma0_u, sigma0_v),
              by = "config_id") %>%
-    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
+    filter(sigma0_u == .sigma0_u, sigma0_v == .sigma0_v) %>%
     arrange(estimator, type)
 }
 
-diagnose.sd_u <- function(res) {
+diagnose.sd_u <- function(res, .sigma0_u=0.7, .sigma0_v=0.7) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   stats %>%
     filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
     group_by(config_id) %>%
     summarize(sd_u.hat = mean(sd_u)) %>%
     inner_join(configs, by = "config_id") %>%
-    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
+    filter(sigma0_u == .sigma0_u, sigma0_v == .sigma0_v) %>%
     dplyr::select(config_id, n, px, pz, s_beta, s.j, type, sd_u.hat, sigma0_u)
 }
 
-mse_beta <- function(res) {
+mse_beta <- function(res, .sigma0_u=0.7, .sigma0_v=0.7) {
   est <- res$est; stats <- res$stats; configs <- res$configs
   est %>%
     filter(estimator == "Lasso") %>%
@@ -95,7 +95,7 @@ mse_beta <- function(res) {
     group_by(config_id) %>%
     summarize(avg_mse = mean(mse)) %>%
     inner_join(configs, by = "config_id") %>%
-    filter(sigma0_u == 0.7, sigma0_v == 0.7) %>%
+    filter(sigma0_u == .sigma0_u, sigma0_v == .sigma0_v) %>%
     dplyr::select(config_id, n, px, pz, s_beta, s.j, type, avg_mse)
 }
 
@@ -124,6 +124,17 @@ res %>% diagnose.Theta %>% print(n=Inf)
 res %>% diagnose.sd_u %>% print(n=Inf)
 res %>% mse_beta %>% print(n=Inf)
 res %>% diagnose_rems %>% print(n=Inf)
+
+res$stats %>%
+  filter(estimator %in% c("Debiased_CLIME", "Debiased_JM")) %>%
+  inner_join(res$configs, by="config_id") %>%
+  filter(sigma0_u==0.7, sigma0_v==0.7) %>%
+  group_by(estimator, config_id) %>%
+  summarize(avg_mu_star = mean(mu_star)) %>%
+  inner_join(res$configs, by="config_id") %>%
+  dplyr::select(config_id, n, px, pz, s_beta, s.j, type, avg_mu_star) %>%
+  arrange(estimator, type) %>%
+  print(n=Inf)
 
 
 # ingest() %>%
