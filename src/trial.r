@@ -24,7 +24,6 @@ trial <- function(tau=1.1) {
 
   # relaxed inverse estimation
   Sigma_d.hat <- .Sigmahat(D.hat)
-  mus_CLIME <- find_mu(Sigma_d.hat) * tau
   Id <- diag(1, px) # Identity matrix
 
   res_JM <- .Theta.hat_JM(Sigma_d.hat, n)
@@ -34,6 +33,9 @@ trial <- function(tau=1.1) {
   objs_JM <- map_dbl(1:px,
     ~ { Theta.hat_JM[.,] %>% abs %>% sum })
 
+  # Use JM mus for CLIME programs
+  # mus_CLIME <- find_mu(Sigma_d.hat) * tau
+  mus_CLIME <- mus_JM
   Theta.hat_CLIME <- .Theta.hat_CLIME(Sigma_d.hat, mus_CLIME)
   mu_stars_CLIME <- map_dbl(1:px,
     ~ { (Sigma_d.hat %*% Theta.hat_CLIME[.,] - Id[.,]) %>% abs %>% max})
@@ -83,7 +85,7 @@ trial <- function(tau=1.1) {
             rep(NA, px)),
     Theta_jj = c(diag(Theta), diag(Theta), rep(NA, px)),
     Theta.hat_jj = c(diag(Theta.hat_CLIME), diag(Theta.hat_JM), rep(NA, px)),
-    mus = c(mus_CLIME, mus_JM, rep(NA, px)),
+    mu = c(mus_CLIME, mus_JM, rep(NA, px)),
     mu_stars = c(mu_stars_CLIME, mu_stars_JM, rep(NA, px)),
     objs = c(objs_CLIME, objs_JM, rep(NA, px)),
     w = c(w, w, rep(NA, px)),
