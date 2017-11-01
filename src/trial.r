@@ -24,20 +24,21 @@ trial <- function(tau=1.1) {
 
   # relaxed inverse estimation
   Sigma_d.hat <- .Sigmahat(D.hat)
-  mus <- find_mu(Sigma_d.hat) * tau
+  mus_CLIME <- find_mu(Sigma_d.hat) * tau
   Id <- diag(1, px) # Identity matrix
 
-  Theta.hat_CLIME <- .Theta.hat_CLIME(Sigma_d.hat, mus)
-  mu_stars_CLIME <- map_dbl(1:px,
-    ~ { (Sigma_d.hat %*% Theta.hat_CLIME[.,] - Id[.,]) %>% abs %>% max})
-  objs_CLIME <- map_dbl(1:px,
-    ~ { Theta.hat_CLIME[.,] %>% abs %>% sum })
-
-  Theta.hat_JM <- .Theta.hat_JM(Sigma_d.hat, n)
+  res_JM <- .Theta.hat_JM(Sigma_d.hat, n)
+  Theta.hat_JM <- res_JM$Theta.hat; mus_JM <- res_JM$mus
   mu_stars_JM <- map_dbl(1:px,
     ~ { (Sigma_d.hat %*% Theta.hat_JM[.,] - Id[.,]) %>% abs %>% max})
   objs_JM <- map_dbl(1:px,
     ~ { Theta.hat_JM[.,] %>% abs %>% sum })
+
+  Theta.hat_CLIME <- .Theta.hat_CLIME(Sigma_d.hat, mus_CLIME)
+  mu_stars_CLIME <- map_dbl(1:px,
+    ~ { (Sigma_d.hat %*% Theta.hat_CLIME[.,] - Id[.,]) %>% abs %>% max})
+  objs_CLIME <- map_dbl(1:px,
+    ~ { Theta.hat_CLIME[.,] %>% abs %>% sum })
 
   # de-biased second-stage lasso estimation
   beta_debiased_CLIME <- .beta_debiased(y, X, D.hat, beta_Lasso_D.hat, Theta.hat_CLIME)
@@ -82,6 +83,7 @@ trial <- function(tau=1.1) {
             rep(NA, px)),
     Theta_jj = c(diag(Theta), diag(Theta), rep(NA, px)),
     Theta.hat_jj = c(diag(Theta.hat_CLIME), diag(Theta.hat_JM), rep(NA, px)),
+    mus = c(mus_CLIME, mus_JM, rep(NA, px)),
     mu_stars = c(mu_stars_CLIME, mu_stars_JM, rep(NA, px)),
     objs = c(objs_CLIME, objs_JM, rep(NA, px)),
     w = c(w, w, rep(NA, px)),

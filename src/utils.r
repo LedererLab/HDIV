@@ -97,6 +97,7 @@ InverseLinfty <- function(sigma, n, resol=1.5, mu=NULL, maxiter=50, threshold=1e
   M <- matrix(0, p, p);
   xperc = 0;
   xp = round(p/10);
+  mus <- numeric(p)
   for (i in 1:p) {
     if ((i %% xp)==0){
       xperc = xperc+10;
@@ -146,7 +147,8 @@ InverseLinfty <- function(sigma, n, resol=1.5, mu=NULL, maxiter=50, threshold=1e
       }
       try.no <- try.no+1
     }
+    mus[i] <- mu
     M[i,] <- beta;
   }
-  return(M)
+  return(list(Theta.hat = M, mus = mus))
 }
