@@ -86,18 +86,17 @@
 # Empirical Gram matrix
 .Sigmahat <- function(x) { (t(x) %*% x) / nrow(x) }
 
-find_mu <- function(Sigma.hat) {
+find_mus <- function(Sigma.hat) {
   px <- ncol(Sigma.hat)
-  c1 <- lapply(1:px,
-               function(j) { a <- rep(0,px); a[j] <- -1; c(-1*Sigma.hat[j,], a, 0) }) %>%
-    reduce(rbind)
-  c2 <- lapply(1:px,
-               function(j) { a <- rep(0,px); a[j] <- -1; c(Sigma.hat[j,], a, 0) }) %>%
-    reduce(rbind)
-  c3_1 <- matrix(ncol=px,nrow=px); c3_1[,] <- 0
-  c3 <- cbind(c3_1, diag(1, px), rep(-1, px))
+  Id <- diag(1, px)
+  zeros <- matrix(ncol=px,nrow=px); zeros[,] <- 0
+
+  c1 <- cbind(Sigma.hat, -1*Sigma.hat, -1*Id, rep(0, px))
+  c2 <- cbind(-1*Sigma.hat, Sigma.hat, -1*Id, rep(0, px))
+  c3 <- cbind(zeros, zeros, diag(1, px), rep(-1, px))
   A <- rbind(c1, c2, c3)
-  obj <- c(rep(0, 2*px), 1)
+
+  obj <- c(rep(0, 3*px), 1)
   dir <- rep("<=", 3*px)
   mus <- lapply(
     1:px,
@@ -110,29 +109,6 @@ find_mu <- function(Sigma.hat) {
       res.j$objval
     }
   ) %>% as.numeric
-
-  # ncores <- 100
-  # cl <- makeCluster(ncores, type="FORK")
-  # c1 <- parLapply(cl, 1:px,
-  #                  function(j) { a <- rep(0,px); a[j] <- -1; c(-1*Sigma.hat[j,], a, 0) }) %>%
-  #   reduce(rbind)
-  # c2 <- parLapply(cl, 1:px,
-  #                  function(j) { a <- rep(0,px); a[j] <- -1; c(Sigma.hat[j,], a, 0) }) %>%
-  #   reduce(rbind)
-  # mus <- parLapply(
-  #   cl, 1:px,
-  #   function(j) {
-  #     b1.j <- rep(0,px); b1.j[j] <- -1
-  #     b2.j <- rep(0,px); b2.j[j] <- 1
-  #     b3.j <- rep(0,px)
-  #     b.j <- c(b1.j, b2.j, b3.j)
-  #     res.j <- lp(direction="min", objective.in=obj, const.mat=A, const.dir=dir, const.rhs=b.j)
-  #     res.j$objval
-  #   }
-  # ) %>% as.numeric
-  # stopCluster(cl)
-
-
   mus
 }
 
@@ -144,48 +120,22 @@ find_mu <- function(Sigma.hat) {
 
 .Theta.hat_CLIME <- function(Sigma.hat, mus) {
   px <- ncol(Sigma.hat)
-  # ncores <- 100
-  # cl <- makeCluster(ncores, type="FORK")
-  # c1 <- parLapply(cl, 1:px,
-  #                 function(j) { a <- rep(0,2*px); a[j] <- -1; a[j+px] <- -1; a } ) %>%
-  #   reduce(rbind)
-  # c2 <- parLapply(cl, 1:px,
-  #                 function(j) { a <- rep(0,2*px); a[j] <- 1; a[j+px] <- -1; a } ) %>%
-  #   reduce(rbind)
-  # c3 <- parLapply(cl, 1:px,
-  #                 function(j) { c(-1*Sigma.hat[j,], rep(0, px)) }) %>%
-  #   reduce(rbind)
-  # c4 <- parLapply(cl, 1:px,
-  #                 function(j) { c(Sigma.hat[j,], rep(0, px)) }) %>%
-  #   reduce(rbind)
   c1 <- lapply(1:px,
-               function(j) { a <- rep(0,2*px); a[j] <- -1; a[j+px] <- -1; a } ) %>%
+               function(j) { a <- rep(0,3*px); a[j] <- -1; a[j+px] <- 1; a[j+2*px] <- -1; a } ) %>%
     reduce(rbind)
   c2 <- lapply(1:px,
-               function(j) { a <- rep(0,2*px); a[j] <- 1; a[j+px] <- -1; a } ) %>%
+               function(j) { a <- rep(0,3*px); a[j] <- 1;a[j+px] <- -1; a[j+2*px] <- -1; a } ) %>%
     reduce(rbind)
   c3 <- lapply(1:px,
-               function(j) { c(-1*Sigma.hat[j,], rep(0, px)) }) %>%
+               function(j) { c(-1*Sigma.hat[j,], Sigma.hat[j,], rep(0, px)) }) %>%
     reduce(rbind)
   c4 <- lapply(1:px,
-               function(j) { c(Sigma.hat[j,], rep(0, px)) }) %>%
+               function(j) { c(Sigma.hat[j,], -1*Sigma.hat[j,], rep(0, px)) }) %>%
     reduce(rbind)
   A <- rbind(c1, c2, c3, c4)
   dir <- rep("<=", 4*px)
-  obj <- c(rep(0,px), rep(1,px))
+  obj <- c(rep(0,px), rep(0,px), rep(1,px))
 
-  # Theta.hat <- parLapply(
-  #   cl, 1:px,
-  #   function(j) {
-  #     b1 <- rep(mus[j], px); b1[j] = mus[j]-1
-  #     b2 <- rep(mus[j], px); b2[j] = mus[j]+1
-  #     b <- c(rep(0, 2*px), b1, b2)
-  #     res.j <- lp(direction="min", objective.in=obj, const.mat=A, const.dir=dir, const.rhs=b)
-  #     res.j$solution[1:px]
-  #   }
-  # ) %>%
-  #   reduce(rbind)
-  # stopCluster(cl)
   Theta.hat <- lapply(
     1:px,
     function(j) {
@@ -193,8 +143,9 @@ find_mu <- function(Sigma.hat) {
       b1 <- rep(mu, px); b1[j] = mu-1
       b2 <- rep(mu, px); b2[j] = mu+1
       b <- c(rep(0, 2*px), b1, b2)
-      res.j <- lp(direction="min", objective.in=obj, const.mat=A, const.dir=dir, const.rhs=b)
-      res.j$solution[1:px]
+      res_j <- lp(direction="min", objective.in=obj, const.mat=A, const.dir=dir, const.rhs=b)
+      theta_j <- res_j$solution[1:px] - res_j$solution[(px+1):(2*px)]
+      theta_j
     }
   ) %>%
     reduce(rbind)

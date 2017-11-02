@@ -34,8 +34,8 @@ trial <- function(tau=1.1) {
     ~ { Theta.hat_JM[.,] %>% abs %>% sum })
 
   # Use JM mus for CLIME programs
-  # mus_CLIME <- find_mu(Sigma_d.hat) * tau
-  mus_CLIME <- mus_JM
+  mus_CLIME <- find_mus(Sigma_d.hat) * tau
+  # mus_CLIME <- mus_JM
   Theta.hat_CLIME <- .Theta.hat_CLIME(Sigma_d.hat, mus_CLIME)
   mu_stars_CLIME <- map_dbl(1:px,
     ~ { (Sigma_d.hat %*% Theta.hat_CLIME[.,] - Id[.,]) %>% abs %>% max})
