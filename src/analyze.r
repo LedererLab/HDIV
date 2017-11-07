@@ -17,8 +17,8 @@ options(tibble.width = Inf)
 # Data ingestion
 
 ingest <- function() {
-  est <- read.csv("res/est.csv")
-  stats <- read.csv("res/stats.csv")
+  est <- read.csv("res2/est.csv")
+  stats <- read.csv("res2/stats.csv")
   configs <- read.csv("configs/configs.csv")
 
   list(est = est, stats = stats, configs = configs)
@@ -38,7 +38,7 @@ cvg <-function(res, .sigma0_u=0.7, .sigma0_v=0.7) {
     #            dplyr::select(config_id, trial_id),
     #            by = c("config_id", "trial_id", "estimator")) %>%
     mutate(cvgj = covered(estimate_j, beta0_j,
-                          SE3/sqrt(n))) %>%
+                          SE2/sqrt(n))) %>%
     group_by(estimator, config_id, j) %>%
     summarize(cvgj = mean(cvgj),
               ntrials = n()) %>%
