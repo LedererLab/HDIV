@@ -1,23 +1,12 @@
-# Inference for high-dimensional nested regression
+# Inference for High-dimensional Nested Regression
 
-Methods for statistical inference in high-dimensional models under endogeneity of regressors of interest.
-
-
-## Authors
-
-**David Gold, Johannes Lederer, Jing Tao** - University of Washington
+Statistical inference in high-dimensional models under endogeneity of regressors of interest.
 
 
-## Reference
 
-[Inference for high-dimensional nested regression](https://arxiv.org/abs/1708.05499)
+## Contents and usage
 
-Cite as "Inference for high-dimensional nested regression, *Gold, Lederer, and Tao,* arXiv:1708.05499, 2017"
-
-
-## Software
-
-The present repository contains the software used to conduct the simulation studies cited in the paper "Inference for high-dimensional nested regression".
+The present repository contains the software used to conduct the simulation studies cited in the paper "Inference for high-dimensional nested regression."
 Please note that the software is designed for use on a cluster under the [Slurm Workload Manager](https://slurm.schedmd.com/).
 The simulation routine may be adapted for serial execution, or for parallel execution under a different workload manager.
 Our primary objective in hosting this repository is the transparent presentation of the processes used to obtain our empirical results.
@@ -73,3 +62,22 @@ An example usage is
 ```
 src/run.sh 1 10
 ```
+
+
+
+## Reference
+
+[Inference for high-dimensional nested regression](https://arxiv.org/abs/1708.05499)
+
+Authors: **David Gold, Johannes Lederer, Jing Tao** &mdash; University of Washington
+
+Cite as "Inference for high-dimensional nested regression, *Gold, Lederer, and Tao,* arXiv:1708.05499, 2017"
+
+## Repository authors
+
+* **[David Gold](dag89@uw.edu)** &mdash; Graduate student in Statistics, University of Washington &mdash; *main repository author*
+
+* **[Johannes Lederer](ledererj@uw.edu)** &mdash; Assistant Professor in Statistics, University of Washington
+
+
+
