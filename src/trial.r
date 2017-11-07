@@ -26,6 +26,7 @@ trial <- function(tau=1.2) {
   Sigma_d.hat <- .Sigmahat(D.hat)
   Id <- diag(1, px) # Identity matrix
 
+  # Calculate JM estimator
   res_JM <- .Theta.hat_JM(Sigma_d.hat, n)
   Theta.hat_JM <- res_JM$Theta.hat; mus_JM <- res_JM$mus
   mu_stars_JM <- map_dbl(1:px,
@@ -33,9 +34,8 @@ trial <- function(tau=1.2) {
   objs_JM <- map_dbl(1:px,
     ~ { Theta.hat_JM[.,] %>% abs %>% sum })
 
-  # Use JM mus for CLIME programs
+  # Calculate CLIME estimator
   mus_CLIME <- find_mus(Sigma_d.hat) * tau
-  # mus_CLIME <- mus_JM
   Theta.hat_CLIME <- .Theta.hat_CLIME(Sigma_d.hat, mus_CLIME)
   mu_stars_CLIME <- map_dbl(1:px,
     ~ { (Sigma_d.hat %*% Theta.hat_CLIME[.,] - Id[.,]) %>% abs %>% max})
